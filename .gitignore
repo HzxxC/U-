@@ -3,9 +3,7 @@
 .project
 .settings
 .idea
-/api
-/public/api
-/public/assets/dist
-/node_modules
-/data/runtime
-/data/install.lock
+/public/plugins
+/data
+/upload
+/app

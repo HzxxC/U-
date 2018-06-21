@@ -22,6 +22,13 @@ class HomeBaseController extends BaseController
         // 监听home_init
         hook('home_init');
         parent::_initialize();
+
+        var_dump(session('user'));
+        //微信中获取用户信息自动注册 
+        if(cmf_is_wechat()){
+            wechat()->wechatAutoReg(wechat()->getOpenId());             
+        }
+
         $siteInfo = cmf_get_site_info();
         View::share('site_info', $siteInfo);
     }
@@ -29,6 +36,12 @@ class HomeBaseController extends BaseController
     public function _initializeView()
     {
         $cmfThemePath    = config('cmf_theme_path');
+        
+        // 验证是否是手机端登陆
+        if(request()->isMobile()&&('mobile'!=request()->module())){
+            $cmfThemePath    = config('cmf_mobile_theme_path');
+        }
+
         $cmfDefaultTheme = cmf_get_current_theme();
 
         $themePath = "{$cmfThemePath}{$cmfDefaultTheme}";

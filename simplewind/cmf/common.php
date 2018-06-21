@@ -12,6 +12,7 @@ use think\Config;
 use think\Db;
 use think\Url;
 use dir\Dir;
+use wechat\UloveWechat;
 use think\Route;
 use think\Loader;
 use think\Request;
@@ -22,6 +23,24 @@ use cmf\lib\Storage;
 //设置插件入口路由
 Route::any('plugin/[:_plugin]/[:_controller]/[:_action]', "\\cmf\\controller\\PluginController@index");
 Route::get('captcha/new', "\\cmf\\controller\\CaptchaController@index");
+
+/**
+ * 微信自动登陆助手函数
+ */
+if (!function_exists('wechat')) {
+    /**
+     * 助手函数
+     * @return [type] [description]
+     */
+    function wechat() {
+
+        return UloveWechat::getInstance([
+        'appid'=>config('appid'),
+        'appsecret'=>config('appsecret'),
+        'token'=>config('token'),
+        'encodingaeskey'=>config('encodingaeskey')]);
+    }
+}
 
 /**
  * 获取当前登录的管理员ID
@@ -1880,3 +1899,4 @@ function cmf_data_to_xml($data, $item = 'item', $id = 'id')
     }
     return $xml;
 }
+
