@@ -23,12 +23,15 @@ class HomeBaseController extends BaseController
         hook('home_init');
         parent::_initialize();
 
+        $siteInfo = cmf_get_site_info();
+        // 动态配置config
+        cmf_set_dynamic_config($siteInfo);
+
         //微信中获取用户信息自动注册 
         if(cmf_is_wechat()){
             wechat()->wechatAutoReg(wechat()->getOpenId());             
         }
 
-        $siteInfo = cmf_get_site_info();
         View::share('site_info', $siteInfo);
     }
 

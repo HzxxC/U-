@@ -4,5 +4,6 @@
 .settings
 .idea
 /public/plugins
-/data
+/data/runtime
+/data/lang
 /upload

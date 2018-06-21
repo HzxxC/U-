@@ -35,10 +35,10 @@ if (!function_exists('wechat')) {
     function wechat() {
 
         return UloveWechat::getInstance([
-        'appid'=>config('appid'),
-        'appsecret'=>config('appsecret'),
-        'token'=>config('token'),
-        'encodingaeskey'=>config('encodingaeskey')]);
+        'appid'          => config('site_wechat_appid'),
+        'appsecret'      => config('site_wechat_appsecret'),
+        'token'          => config('site_wechat_token'),
+        'encodingaeskey' => config('site_wechat_encodingaeskey')]);
     }
 }
 
