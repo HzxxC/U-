@@ -23,7 +23,6 @@ class HomeBaseController extends BaseController
         hook('home_init');
         parent::_initialize();
 
-        var_dump(session('user'));
         //微信中获取用户信息自动注册 
         if(cmf_is_wechat()){
             wechat()->wechatAutoReg(wechat()->getOpenId());             
