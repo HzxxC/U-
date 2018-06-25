@@ -114,4 +114,22 @@ class RegisterController extends HomeBaseController
         }
 
     }
+
+    /**
+     * 前台会员完善用户信息
+     * @return [type] [description]
+     */
+    public function doComplete() {
+
+        // TODO 完善信息操作
+
+        if ($this->request->isPost()) {
+            
+            return ['success' => 1, 'msg' => '完善成功'];
+
+        } else {
+            
+            return ['error' => 1, 'msg' => '完善失败'];            
+        }
+    }
 }

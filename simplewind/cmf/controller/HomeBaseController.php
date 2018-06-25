@@ -32,6 +32,12 @@ class HomeBaseController extends BaseController
             wechat()->wechatAutoReg(wechat()->getOpenId());             
         }
 
+        // 用户未完善信息，跳转完善信息页面
+        if (!false && request()->module() != 'user') {
+            header('Location: ' . cmf_get_root() . '/?s=user/register');
+            exit;
+        }
+
         View::share('site_info', $siteInfo);
     }
 

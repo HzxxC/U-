@@ -1,0 +1,72 @@
+@charset 'utf-8';
+/**
+ * 手机端样式
+ * Author: Pengchu;
+ */
+
+/* Register */
+#register .mui-content {
+	background-color: transparent;
+	padding: 0 30px;
+}
+
+#register h3.title {
+	margin: 10px 0 20px;
+	color: #dd524d;
+	font-size: 32px;
+	text-align: center;
+	letter-spacing: 8px;
+}
+
+#register .mui-input-group input {
+	font-size: 14px;
+}
+
+#register .mui-content-padded {
+	margin: 10px 0;
+}
+
+#register .mui-input-row {
+	margin-bottom: 15px;
+}
+
+#register .mui-input-group .mui-input-row:after {
+	/*background-color: transparent;*/
+}
+
+#register .mui-input-group:before, #register .mui-input-group:after {
+	background-color: transparent;
+}
+
+#mobile {
+	width: 65%;
+}
+
+#mobile + .mui-icon-clear {
+	right: 85px;
+}
+
+button#captcha {
+	position: absolute;
+	width: auto;
+    bottom: 6px;
+    right: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+button#reg {
+	font-size: 14px;
+	padding: 6px 12px;
+}
+
+/* Footer */
+
+#footer .mui-bar {
+	box-shadow: none;
+}
+
+#footer .mui-bar-tab .mui-tab-item {
+	font-size: 14px;
+}
+
