@@ -4,6 +4,23 @@
  * Author: Pengchu;
  */
 
+/* Home */
+
+#home .mui-content {
+	background-color: transparent;
+	padding: 0 30px;
+}
+
+#home .mui-grid-view.mui-grid-9 {
+	background-color: transparent;
+	border: 0;
+}
+
+#home .mui-grid-view.mui-grid-9 .mui-table-view-cell {
+	background-color: transparent;
+	border: 0;
+}
+
 /* Register */
 #register .mui-content {
 	background-color: transparent;

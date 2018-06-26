@@ -946,6 +946,16 @@ function cmf_is_wechat()
 }
 
 /**
+ * 验证openid是否存在
+ * @param  string $openid 微信标识符
+ * @return [type]         [description]
+ */
+function cmf_check_wechat_openid($openid) {
+    
+    return Db::name('user')->where(['wechat_openid'=>$openid])->count();
+}
+
+/**
  * 添加钩子
  * @param string $hook 钩子名称
  * @param mixed $params 传入参数
@@ -1900,3 +1910,12 @@ function cmf_data_to_xml($data, $item = 'item', $id = 'id')
     return $xml;
 }
 
+function cmf_is_complete($uid) {
+
+    if (!empty($uid)) {
+
+        return Db::name('user') -> where('id', $uid) -> value('complete');
+    }
+
+    return false;
+}

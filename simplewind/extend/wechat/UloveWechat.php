@@ -112,7 +112,7 @@ final class UloveWechat extends Wechat
 		if($openid){
 			return $openid;
 		}else{		
-			 if (in_wechat()) {			 	             
+			 if (cmf_is_wechat()) {			 	             
 	            $redirect_uri = request()->url(true);					
 	            $AccessCode   = $this->getAccessCode($redirect_uri, "snsapi_base");				
 	            if ($AccessCode !== FALSE) {	            	
@@ -335,7 +335,7 @@ final class UloveWechat extends Wechat
             	die('授权失败，请稍候在试');
             }			
 		}
-		if($user_info && !check_wechat_openid($openid)){
+		if($user_info && !cmf_check_wechat_openid($openid)){
 
 			$data   = [
                 'user_nickname'   => empty($user_info['nickname']) ? '' : $user_info['nickname'],
@@ -350,7 +350,7 @@ final class UloveWechat extends Wechat
             $userId = Db::name("user")->insertGetId($data);
             $data   = Db::name("user")->where('id', $userId)->find();
 			
-			$user['id']				= $userId
+			$user['id']				= $userId;
 			$user['openid']			= $data['wechat_openid'];
 			$user['user_nickname']	= $data['user_nickname'];
 			$user['complete']  		= $data['complete'];

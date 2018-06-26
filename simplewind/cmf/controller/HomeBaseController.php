@@ -33,7 +33,7 @@ class HomeBaseController extends BaseController
         }
 
         // 用户未完善信息，跳转完善信息页面
-        if (!false && request()->module() != 'user') {
+        if (!cmf_is_complete(session('user.id')) && request()->module() != 'user') {
             header('Location: ' . cmf_get_root() . '/?s=user/register');
             exit;
         }
