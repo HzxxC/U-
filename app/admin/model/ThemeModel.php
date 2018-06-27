@@ -26,8 +26,9 @@ class ThemeModel extends Model
 
     public function installTheme($theme)
     {
-        $cmfHomeThemePath = config('cmf_theme_path');
-        $manifest = $cmfHomeThemePath."$theme/manifest.json";
+        $cmfRootThemePath = config('cmf_theme_root');
+
+        $manifest = $cmfRootThemePath."/$theme/default/manifest.json";
         if (file_exists_case($manifest)) {
             $manifest           = file_get_contents($manifest);
             $themeData          = json_decode($manifest, true);
@@ -44,8 +45,9 @@ class ThemeModel extends Model
 
     public function updateTheme($theme)
     {
-        $cmfHomeThemePath = config('cmf_theme_path');
-        $manifest = $cmfHomeThemePath."$theme/manifest.json";
+        $cmfRootThemePath = config('cmf_theme_root');
+
+        $manifest = $cmfRootThemePath."/$theme/default/manifest.json";
         if (file_exists_case($manifest)) {
             $manifest  = file_get_contents($manifest);
             $themeData = json_decode($manifest, true);
@@ -72,8 +74,8 @@ class ThemeModel extends Model
 
     private function updateThemeFiles($theme, $suffix = 'html')
     {
-        $cmfHomeThemePath   = config('cmf_theme_path');
-        $dir                = $cmfHomeThemePath . $theme;
+        $cmfRootThemePath   = config('cmf_theme_root');
+        $dir                = $cmfRootThemePath . '/' . $theme . '/default';
         $themeDir           = $dir;
         $tplFiles           = [];
         $root_dir_tpl_files = cmf_scan_dir("$dir/*.$suffix");
@@ -135,15 +137,19 @@ class ThemeModel extends Model
                     'is_public'   => $isPublic,
                     'list_order'  => $listOrder
                 ]);
+
             }
         }
+
+
 
         // 检查安装过的模板文件是否已经删除
         $files = Db::name('theme_file')->where(['theme' => $theme])->select();
 
         foreach ($files as $themeFile) {
-            $tplFile           = $themeDir . '/' . $themeFile['file'] . '.' . $suffix;
-            $tplFileConfigFile = $themeDir . '/' . $themeFile['file'] . '.json';
+            $tplFile           = $themeFile['file'] . '.' . $suffix;
+            $tplFileConfigFile = $themeFile['file'] . '.json';
+
             if (!is_file($tplFile) || !file_exists_case($tplFileConfigFile)) {
                 Db::name('theme_file')->where(['theme' => $theme, 'file' => $themeFile['file']])->delete();
             }

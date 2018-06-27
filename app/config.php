@@ -225,6 +225,7 @@ $configs = [
     // +----------------------------------------------------------------------
     // | CMF 设置
     // +----------------------------------------------------------------------
+    'cmf_theme_root'          => 'public/themes',
     'cmf_theme_path'          => 'public/themes/home/',
     'cmf_mobile_theme_path'   => 'public/themes/mobile/',
     'cmf_default_theme'       => 'default',

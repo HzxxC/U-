@@ -39,6 +39,7 @@ class ThemeController extends AdminBaseController
         $this->assign("themes", $themes);
 
         $defaultTheme = config('cmf_default_theme');
+        
         if ($temp = session('cmf_default_theme')) {
             $defaultTheme = $temp;
         }
@@ -61,12 +62,9 @@ class ThemeController extends AdminBaseController
      */
     public function install()
     {
-        $cmfHomeThemePath    = config('cmf_theme_path');
+        $cmfRootThemePath    = config('cmf_theme_root');
 
-        $themesDirs = cmf_scan_dir($cmfHomeThemePath."*", GLOB_ONLYDIR);
-
-        $root_dir_tpl_files = cmf_sub_dirs($cmfHomeThemePath."default");
-        var_dump($root_dir_tpl_files);
+        $themesDirs = cmf_scan_dir($cmfRootThemePath."/*", GLOB_ONLYDIR);
 
         $themeModel = new ThemeModel();
 
@@ -76,7 +74,7 @@ class ThemeController extends AdminBaseController
 
         $themes = [];
         foreach ($themesDirs as $dir) {
-            $manifest = $cmfHomeThemePath."/$dir/manifest.json";
+            $manifest = $cmfRootThemePath."/$dir/default/manifest.json";
             if (file_exists_case($manifest)) {
                 $manifest       = file_get_contents($manifest);
                 $theme          = json_decode($manifest, true);
@@ -84,6 +82,7 @@ class ThemeController extends AdminBaseController
                 array_push($themes, $theme);
             }
         }
+
         $this->assign('themes', $themes);
 
         return $this->fetch();
@@ -878,6 +877,70 @@ class ThemeController extends AdminBaseController
         $this->assign('filters', $filters);
         return $this->fetch();
 
+    }
+
+    public function test() {
+        $cmfRootThemePath   = config('cmf_theme_root');
+        $dir                = $cmfRootThemePath . '/mobile/default';
+        $themeDir           = $dir;
+        $tplFiles           = [];
+        $root_dir_tpl_files = cmf_scan_dir("$dir/*.html");
+        $subDirs = cmf_sub_dirs($dir);
+        foreach ($subDirs as $dir) {
+            $subDirTplFiles = cmf_scan_dir("$dir/*.html");
+            foreach ($subDirTplFiles as $tplFile) {
+                $tplFile         = "$dir/$tplFile";
+                $configFile      = preg_replace("/\.html$/", '.json', $tplFile);
+                $tplFileNoSuffix = preg_replace("/\.html$/", '', $tplFile);
+                if (is_file($tplFile) && file_exists_case($configFile)) {
+                    array_push($tplFiles, $tplFileNoSuffix);
+                }
+            }
+        }
+
+        $theme = 'mobile';
+
+        foreach ($tplFiles as $tplFile) {
+            $configFile = $tplFile . ".json";
+            $file       = preg_replace('/^themes\/' . $theme . '\//', '', $tplFile);
+            $file       = strtolower($file);
+            $config     = json_decode(file_get_contents($configFile), true);
+            $findFile   = Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->find();
+            $isPublic   = empty($config['is_public']) ? 0 : 1;
+            $listOrder  = empty($config['order']) ? 0 : floatval($config['order']);
+            $configMore = empty($config['more']) ? [] : $config['more'];
+            $more       = $configMore;
+
+            if (empty($findFile)) {
+                Db::name('theme_file')->insert([
+                    'theme'       => $theme,
+                    'action'      => $config['action'],
+                    'file'        => $file,
+                    'name'        => $config['name'],
+                    'more'        => json_encode($more),
+                    'config_more' => json_encode($configMore),
+                    'description' => $config['description'],
+                    'is_public'   => $isPublic,
+                    'list_order'  => $listOrder
+                ]);
+            } else { // 更新文件
+                $moreInDb = json_decode($findFile['more'], true);
+                $more     = $this->updateThemeConfigMore($configMore, $moreInDb);
+                Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->update([
+                    'theme'       => $theme,
+                    'action'      => $config['action'],
+                    'file'        => $file,
+                    'name'        => $config['name'],
+                    'more'        => json_encode($more),
+                    'config_more' => json_encode($configMore),
+                    'description' => $config['description'],
+                    'is_public'   => $isPublic,
+                    'list_order'  => $listOrder
+                ]);
+            }
+        }
+
+        var_dump($tplFiles);
     }
 
 }
