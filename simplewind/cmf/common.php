@@ -138,7 +138,7 @@ function cmf_get_current_theme()
     }
 
     $t     = 't';
-    $theme = config('cmf_default_theme');
+    $theme = config('cmf_default_theme_name');
 
     $cmfDetectTheme = config('cmf_detect_theme');
     if ($cmfDetectTheme) {

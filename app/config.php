@@ -228,7 +228,6 @@ $configs = [
     'cmf_theme_root'          => 'public/themes',
     'cmf_theme_path'          => 'public/themes/home/',
     'cmf_mobile_theme_path'   => 'public/themes/mobile/',
-    'cmf_default_theme'       => 'default',
     
     'cmf_admin_theme_path'    => 'public/themes/admin/',
     'cmf_admin_default_theme' => 'default',

@@ -33,26 +33,27 @@ class HomeBaseController extends BaseController
         }
 
         // 用户未完善信息，跳转完善信息页面
-        if (!cmf_is_complete(session('user.id')) && request()->module() != 'user') {
-            header('Location: ' . cmf_get_root() . '/?s=user/register');
-            exit;
-        }
+        // if (!cmf_is_complete(session('user.id')) && request()->module() != 'user') {
+        //     header('Location: ' . cmf_get_root() . '/?s=user/register');
+        //     exit;
+        // }
 
         View::share('site_info', $siteInfo);
     }
 
     public function _initializeView()
     {
-        $cmfThemePath    = config('cmf_theme_path');
+        $cmfThemePath    = config('cmf_theme_root');
+        $cmfDefaultTheme = config('cmf_default_theme');
         
         // 验证是否是手机端登陆
-        if(request()->isMobile()&&('mobile'!=request()->module())){
-            $cmfThemePath    = config('cmf_mobile_theme_path');
-        }
+        // if(request()->isMobile()&&('mobile'!=request()->module())){
+        //     $cmfThemePath    = config('cmf_default_theme');
+        // }
+       
+        $cmfDefaultThemeName = cmf_get_current_theme();
 
-        $cmfDefaultTheme = cmf_get_current_theme();
-
-        $themePath = "{$cmfThemePath}{$cmfDefaultTheme}";
+        $themePath = "{$cmfThemePath}/{$cmfDefaultTheme}/{$cmfDefaultThemeName}";
 
         $root = cmf_get_root();
         //使cdn设置生效

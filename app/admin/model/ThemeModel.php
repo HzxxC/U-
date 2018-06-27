@@ -24,11 +24,11 @@ class ThemeModel extends Model
 
     }
 
-    public function installTheme($theme)
+    public function installTheme($theme, $name='default')
     {
         $cmfRootThemePath = config('cmf_theme_root');
 
-        $manifest = $cmfRootThemePath."/$theme/default/manifest.json";
+        $manifest = $cmfRootThemePath."/$theme/$name/manifest.json";
         if (file_exists_case($manifest)) {
             $manifest           = file_get_contents($manifest);
             $themeData          = json_decode($manifest, true);
@@ -43,11 +43,11 @@ class ThemeModel extends Model
         }
     }
 
-    public function updateTheme($theme)
+    public function updateTheme($theme, $name='default')
     {
         $cmfRootThemePath = config('cmf_theme_root');
 
-        $manifest = $cmfRootThemePath."/$theme/default/manifest.json";
+        $manifest = $cmfRootThemePath."/$theme/$name/manifest.json";
         if (file_exists_case($manifest)) {
             $manifest  = file_get_contents($manifest);
             $themeData = json_decode($manifest, true);
@@ -72,10 +72,10 @@ class ThemeModel extends Model
         return Db::name('theme_file')->where(['theme' => $theme, 'action' => $action])->select();
     }
 
-    private function updateThemeFiles($theme, $suffix = 'html')
+    private function updateThemeFiles($theme, $name='default', $suffix = 'html')
     {
         $cmfRootThemePath   = config('cmf_theme_root');
-        $dir                = $cmfRootThemePath . '/' . $theme . '/default';
+        $dir                = $cmfRootThemePath . '/' . $theme . '/' . $name;
         $themeDir           = $dir;
         $tplFiles           = [];
         $root_dir_tpl_files = cmf_scan_dir("$dir/*.$suffix");

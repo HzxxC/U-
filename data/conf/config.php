@@ -11,4 +11,6 @@
   'site_wechat_appsecret' => '53e1449fdb7463d1a1f2df008cc42f83',
   'site_wechat_token' => '',
   'site_wechat_encodingaeskey' => '',
+  'cmf_default_theme' => 'mobile',
+  'cmf_default_theme_name' => 'default',
 );

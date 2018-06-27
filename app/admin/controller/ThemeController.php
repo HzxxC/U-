@@ -74,12 +74,17 @@ class ThemeController extends AdminBaseController
 
         $themes = [];
         foreach ($themesDirs as $dir) {
-            $manifest = $cmfRootThemePath."/$dir/default/manifest.json";
-            if (file_exists_case($manifest)) {
-                $manifest       = file_get_contents($manifest);
-                $theme          = json_decode($manifest, true);
-                $theme['theme'] = $dir;
-                array_push($themes, $theme);
+            $themePath = $cmfRootThemePath."/$dir";
+            $themeDirs = cmf_scan_dir($themePath . "/*", GLOB_ONLYDIR);
+            
+            foreach ($themeDirs as $d) {
+                $manifest = $themePath . "/$d/manifest.json";
+                if (file_exists_case($manifest)) {
+                    $manifest       = file_get_contents($manifest);
+                    $theme          = json_decode($manifest, true);
+                    $theme['theme'] = $dir;
+                    array_push($themes, $theme);
+                }
             }
         }
 
@@ -104,7 +109,7 @@ class ThemeController extends AdminBaseController
     public function uninstall()
     {
         $theme = $this->request->param('theme');
-        if ($theme == "simpleboot3" || config('cmf_default_theme') == $theme) {
+        if ($theme == "mobile" || config('cmf_default_theme') == $theme) {
             $this->error("官方自带模板或当前使用中的模板不可以卸载");
         }
 
@@ -134,13 +139,14 @@ class ThemeController extends AdminBaseController
     public function installTheme()
     {
         $theme      = $this->request->param('theme');
+        $name = $this->request->param('name');
         $themeModel = new ThemeModel();
-        $themeCount = $themeModel->where('theme', $theme)->count();
+        $themeCount = $themeModel->where(array('theme' => $theme, 'name' => $name))->count();
 
         if ($themeCount > 0) {
             $this->error('模板已经安装!');
         }
-        $result = $themeModel->installTheme($theme);
+        $result = $themeModel->installTheme($theme, $name);
         if ($result === false) {
             $this->error('模板不存在!');
         }
@@ -163,13 +169,14 @@ class ThemeController extends AdminBaseController
     public function update()
     {
         $theme      = $this->request->param('theme');
+        $name = $this->request->param('name');
         $themeModel = new ThemeModel();
-        $themeCount = $themeModel->where('theme', $theme)->count();
+        $themeCount = $themeModel->where(array('theme' => $theme, 'name' => $name))->count();
 
         if ($themeCount === 0) {
             $this->error('模板未安装!');
         }
-        $result = $themeModel->updateTheme($theme);
+        $result = $themeModel->updateTheme($theme, $name);
         if ($result === false) {
             $this->error('模板不存在!');
         }
@@ -192,19 +199,20 @@ class ThemeController extends AdminBaseController
     public function active()
     {
         $theme = $this->request->param('theme');
+        $name = $this->request->param('name');
 
-        if ($theme == config('cmf_default_theme')) {
+        if ($theme == session('cmf_default_theme')) {
             $this->error('模板已启用', url("theme/index"));
         }
 
         $themeModel = new ThemeModel();
-        $themeCount = $themeModel->where('theme', $theme)->count();
+        $themeCount = $themeModel->where(array('theme' => $theme, 'name' => $name))->count();
 
         if ($themeCount === 0) {
             $this->error('模板未安装!');
         }
 
-        $result = cmf_set_dynamic_config(['cmf_default_theme' => $theme]);
+        $result = cmf_set_dynamic_config(['cmf_default_theme' => $theme, 'cmf_default_theme_name' => $name]);
 
         if ($result === false) {
             $this->error('配置写入失败!');
