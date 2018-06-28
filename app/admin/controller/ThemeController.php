@@ -907,48 +907,27 @@ class ThemeController extends AdminBaseController
         }
 
         $theme = 'mobile';
+        $default = 'default';
+
+        $cmfRootThemePath = str_replace('/', '\/', $cmfRootThemePath);
+
+        $r =  '/^'. $cmfRootThemePath .'\/' . $theme . '\/'.$default.'\//';
 
         foreach ($tplFiles as $tplFile) {
-            $configFile = $tplFile . ".json";
-            $file       = preg_replace('/^themes\/' . $theme . '\//', '', $tplFile);
+            // $configFile = $tplFile . ".json";
+            $file       = preg_replace($r, '', $tplFile);
             $file       = strtolower($file);
-            $config     = json_decode(file_get_contents($configFile), true);
-            $findFile   = Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->find();
-            $isPublic   = empty($config['is_public']) ? 0 : 1;
-            $listOrder  = empty($config['order']) ? 0 : floatval($config['order']);
-            $configMore = empty($config['more']) ? [] : $config['more'];
-            $more       = $configMore;
+            // $config     = json_decode(file_get_contents($configFile), true);
+            // $findFile   = Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->find();
+            // $isPublic   = empty($config['is_public']) ? 0 : 1;
+            // $listOrder  = empty($config['order']) ? 0 : floatval($config['order']);
+            // $configMore = empty($config['more']) ? [] : $config['more'];
+            // $more       = $configMore;
 
-            if (empty($findFile)) {
-                Db::name('theme_file')->insert([
-                    'theme'       => $theme,
-                    'action'      => $config['action'],
-                    'file'        => $file,
-                    'name'        => $config['name'],
-                    'more'        => json_encode($more),
-                    'config_more' => json_encode($configMore),
-                    'description' => $config['description'],
-                    'is_public'   => $isPublic,
-                    'list_order'  => $listOrder
-                ]);
-            } else { // 更新文件
-                $moreInDb = json_decode($findFile['more'], true);
-                $more     = $this->updateThemeConfigMore($configMore, $moreInDb);
-                Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->update([
-                    'theme'       => $theme,
-                    'action'      => $config['action'],
-                    'file'        => $file,
-                    'name'        => $config['name'],
-                    'more'        => json_encode($more),
-                    'config_more' => json_encode($configMore),
-                    'description' => $config['description'],
-                    'is_public'   => $isPublic,
-                    'list_order'  => $listOrder
-                ]);
-            }
+            echo $tplFile .'<br>';
+            echo $file . '<br>';
         }
 
-        var_dump($tplFiles);
     }
 
 }

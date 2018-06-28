@@ -170,7 +170,7 @@ class AdminCategoryController extends AdminBaseController
         }
 
         $portalCategoryModel = new PortalCategoryModel();
-
+        
         $result = $portalCategoryModel->editCategory($data);
 
         if ($result === false) {
@@ -292,4 +292,5 @@ tpl;
             $this->error('删除失败');
         }
     }
+
 }

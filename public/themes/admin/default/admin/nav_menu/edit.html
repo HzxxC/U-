@@ -57,6 +57,26 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="input-description" class="col-sm-2 control-label">缩略图</label>
+                <div  class="col-md-6 col-sm-10">
+                    <input type="hidden" name="image" class="form-control"
+                           value="{$image|default=''}" id="js-thumbnail-input">
+                    <div>
+                        <a href="javascript:uploadOneImage('图片上传','#js-thumbnail-input');">
+                            <if condition="empty($image)">
+                                <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                     id="js-thumbnail-input-preview"
+                                     width="135" style="cursor: pointer"/>
+                                <else/>
+                                <img src="{:cmf_get_image_preview_url($image)}"
+                                     id="js-thumbnail-input-preview"
+                                width="135" style="cursor: pointer"/>
+                            </if>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-2 control-label">显示:</label>
                 <div class="col-md-6 col-sm-10">
                     <select name="status" class="form-control">

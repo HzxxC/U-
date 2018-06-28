@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white" id="relay-list">
+
+    <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">{$category.name}</h1>
+    </header>
+    <div class="mui-content">
+        <php>
+            $slide = $category['description'] . '_slide';
+            $top_slide_id = empty($theme_vars[$slide]) ? 1 : $theme_vars[$slide];
+        </php>
+        <div id="slider" class="mui-slider" >
+            <div class="mui-slider-group">
+                <slides id="$top_slide_id">
+                    <div class="mui-slider-item mui-slider-item-duplicate">
+                        <a href="{$vo.url|default=''}">
+                            <img src="{:cmf_get_image_url($vo.image)}">
+                        </a>
+                    </div>
+                </slides>
+            </div>
+        </div>
+        <ul class="mui-table-view mui-table-view-chevron" id="list">
+            <php>
+                $where=[
+                'post.create_time'=>['egt',0]
+                ];
+                $page=[
+                    'list_rows'=>10,
+                    'next'=>'下一页',
+                    'prev'=>'上一页'
+                ];
+            </php>
+            <portal:articles item="vo" where="$where" order="post.create_time DESC" page="$page"
+                             relation="categories"
+                             categoryIds="$category.id"
+                             returnVarName="articles_data">
+                 <li class="mui-table-view-cell mui-media">
+                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id']))}">
+                        <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
+                        <div class="mui-media-body">
+                            {$vo.post_title}
+                            <p class='mui-ellipsis'>兑换积分：{$vo.post_excerpt}</p>
+                        </div>
+                    </a>
+                    <a href="" class="mui-btn mui-btn-primary">兑换</a>
+                </li>            
+            </portal:articles>
+        </ul>
+    </div>
+
+<div class="container">
+    <include file="public@footer"/>
+</div>
+<!-- /container -->
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

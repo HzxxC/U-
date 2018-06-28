@@ -1,0 +1,69 @@
+{
+    "name": "通用 列表页",
+    "action": "portal/List/index",
+    "description": "通用 列表模板文件",
+    "order": 10.0,
+    "more": {
+        "vars": {
+            "coles_slide": {
+                "title": "爱心超市 顶部幻灯片",
+                "value": "",
+                "type": "text",
+                "dataSource": {
+                    "api": "admin/Slide/index",
+                    "multi": false
+                },
+                "placeholder": "请选择 爱心超市 顶部幻灯片",
+                "tip": "爱心超市 顶部幻灯片",
+                "rule": {
+                    "require": true
+                }
+            },
+            "ulove_slide": {
+                "title": "U动态 顶部幻灯片",
+                "value": "",
+                "type": "text",
+                "dataSource": {
+                    "api": "admin/Slide/index",
+                    "multi": false
+                },
+                "placeholder": "请选择 U动态 顶部幻灯片",
+                "tip": "U动态 顶部幻灯片",
+                "rule": {
+                    "require": true
+                }
+            },
+            "card_slide": {
+                "title": "爱心一卡通 顶部幻灯片",
+                "value": "",
+                "type": "text",
+                "dataSource": {
+                    "api": "admin/Slide/index",
+                    "multi": false
+                },
+                "placeholder": "请选择 爱心一卡通 顶部幻灯片",
+                "tip": "爱心一卡通 顶部幻灯片",
+                "rule": {
+                    "require": true
+                }
+            },
+            "wish_slide": {
+                "title": "微心愿 顶部幻灯片",
+                "value": "",
+                "type": "text",
+                "dataSource": {
+                    "api": "admin/Slide/index",
+                    "multi": false
+                },
+                "placeholder": "请选择 微心愿 顶部幻灯片",
+                "tip": "微心愿 顶部幻灯片",
+                "rule": {
+                    "require": true
+                }
+            }
+        },
+        "widgets":{
+            
+        }
+    }
+}

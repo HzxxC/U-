@@ -4,6 +4,23 @@
  * Author: Pengchu;
  */
 
+body {
+	padding-top: 0;
+}
+
+.mui-title {
+	font-size: 14px;
+	color: #ffffff;
+}
+
+.mui-bar-nav {
+	background-color: #ff5d5d;
+}
+
+.mui-bar-nav.mui-bar .mui-icon {
+	color: #ffffff;
+}
+
 /* Home */
 
 #home .mui-content {
@@ -19,6 +36,45 @@
 #home .mui-grid-view.mui-grid-9 .mui-table-view-cell {
 	background-color: transparent;
 	border: 0;
+}
+
+#home img.mui-icon {
+	display: block;
+	width: 100%;
+}
+
+#home .mui-media-body {
+	font-size: 14px;
+	line-height: 14px;
+}
+
+/* Relay */
+
+body#relay {
+	height: 100%;
+	background-color: #efeff4;
+}
+
+#relay .mui-icon-extra {
+	font-size: 18px;
+	color: #ff5d5d;
+	padding-right: 5px;
+}
+
+#relay .mui-table-view-cell>a:not(.mui-btn) {
+	color: #3c3939;
+}
+
+
+/* Relay_list */
+
+#relay-list .mui-bar-nav {
+	box-shadow: none;
+}
+
+
+#relay-list #list {
+	padding-top: 15px;
 }
 
 /* Register */

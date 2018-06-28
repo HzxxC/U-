@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <link rel="stylesheet" href="__STATIC__/mui/css/icons-extra.css">
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white" id="relay">
+
+    <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">{$category.name}</h1>
+    </header>
+    <div class="mui-content">
+        <div class="mui-card">
+            <ul class="mui-table-view">
+                <navigation nav-id="" root="" id="main-navigation">
+                    <navigationMenu>
+                        <if condition="$level gt 1">
+                            <li class="mui-table-view-cell">
+                                <a class="mui-navigate-right" href="{$menu.href|default=''}" target="{$menu.target|default=''}">
+                                    <span class="{$menu.icon|default=''}"></span>
+                                    {$menu.name|default=''}
+                                </a>
+                            </li>
+                        </if>
+                    </navigationMenu>
+                    <navigationFolder root="li" dropdown-class="mui-table-view">
+                    </navigationFolder>
+                </navigation>
+            </ul>
+        </div>
+    </div>
+<div class="container">
+    <include file="public@footer"/>
+</div>
+<script>
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

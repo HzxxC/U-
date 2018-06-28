@@ -100,9 +100,12 @@ class ThemeModel extends Model
             }
         }
 
+        $crtp = str_replace('/', '\/', $cmfRootThemePath);
+        $reg        =  '/^'. $crtp .'\/' . $theme . '\/'.$name.'\//';
+
         foreach ($tplFiles as $tplFile) {
             $configFile = $tplFile . ".json";
-            $file       = preg_replace('/^themes\/' . $theme . '\//', '', $tplFile);
+            $file       = preg_replace($reg, '', $tplFile);
             $file       = strtolower($file);
             $config     = json_decode(file_get_contents($configFile), true);
             $findFile   = Db::name('theme_file')->where(['theme' => $theme, 'file' => $file])->find();
@@ -141,14 +144,12 @@ class ThemeModel extends Model
             }
         }
 
-
-
         // 检查安装过的模板文件是否已经删除
         $files = Db::name('theme_file')->where(['theme' => $theme])->select();
 
         foreach ($files as $themeFile) {
-            $tplFile           = $themeFile['file'] . '.' . $suffix;
-            $tplFileConfigFile = $themeFile['file'] . '.json';
+            $tplFile           = $themeDir . '/'. $themeFile['file'] . '.' . $suffix;
+            $tplFileConfigFile = $themeDir . '/'. $themeFile['file'] . '.json';
 
             if (!is_file($tplFile) || !file_exists_case($tplFileConfigFile)) {
                 Db::name('theme_file')->where(['theme' => $theme, 'file' => $themeFile['file']])->delete();

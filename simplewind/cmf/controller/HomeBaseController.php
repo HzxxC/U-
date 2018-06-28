@@ -105,6 +105,7 @@ class HomeBaseController extends BaseController
     {
         $template = $this->parseTemplate($template);
         $more     = $this->getThemeFileMore($template);
+
         $this->assign('theme_vars', $more['vars']);
         $this->assign('theme_widgets', $more['widgets']);
         return parent::fetch($template, $vars, $replace, $config);
@@ -164,7 +165,7 @@ class HomeBaseController extends BaseController
     {
 
         //TODO 增加缓存
-        $theme = empty($theme) ? cmf_get_current_theme() : $theme;
+        $theme = empty($theme) ? config('cmf_default_theme') : $theme;
 
         // 调试模式下自动更新模板
         if (APP_DEBUG) {
@@ -172,10 +173,10 @@ class HomeBaseController extends BaseController
             $themeModel->updateTheme($theme);
         }
 
-        $themePath = config('cmf_theme_path');
+        $themePath = config('cmf_theme_root') . '/' . $theme . '/' .cmf_get_current_theme();
         $file      = str_replace('\\', '/', $file);
         $file      = str_replace('//', '/', $file);
-        $file      = str_replace(['.html', '.php', $themePath . $theme . "/"], '', $file);
+        $file      = str_replace(['.html', '.php', $themePath . "/"], '', $file);
 
         $files = Db::name('theme_file')->field('more')->where(['theme' => $theme])->where(function ($query) use ($file) {
             $query->where(['is_public' => 1])->whereOr(['file' => $file]);

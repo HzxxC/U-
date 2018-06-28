@@ -199,6 +199,7 @@ class NavMenuModel extends Model
                     "rule"      => base64_encode(json_encode($rule)),
                     "parent_id" => empty($item['parent_id']) ? 0 : $item['parent_id'],
                     "id"        => $item['id'],
+                    
                 ]);
 
             }

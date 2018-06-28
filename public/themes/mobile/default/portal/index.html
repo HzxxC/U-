@@ -8,45 +8,40 @@
     <hook name="before_head_end"/>
 </head>
 <body class="body-white" id="home">
-    
+    <php>
+        $top_slide_id = empty($theme_vars['top_slide']) ? 1 : $theme_vars['top_slide'];
+    </php>
+    <div id="slider" class="mui-slider" >
+        <div class="mui-slider-group">
+            <slides id="$top_slide_id">
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="{$vo.url|default=''}">
+                        <img src="{:cmf_get_image_url($vo.image)}">
+                    </a>
+                </div>
+            </slides>
+        </div>
+    </div>
     <div class="mui-content">
         <ul class="mui-table-view mui-grid-view mui-grid-9">
-            <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱心宣誓</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱心接力</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱的足迹</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱心益站</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱心动态</div>
-                </a>
-            </li>
-             <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                <a href="#">
-                    <span class="mui-icon mui-icon-home"></span>
-                    <div class="mui-media-body">爱心记忆</div>
-                </a>
-            </li>
+            <navigation nav-id="" root="" id="main-navigation">
+                <navigationMenu>
+                    <if condition="$level elt 1">
+                        <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                           <a href="{$menu.href|default=''}" target="{$menu.target|default=''}">
+                                <img class="mui-icon" src="{:cmf_get_image_preview_url($menu.image)}" alt="{$menu.name|default=''}">
+                                <div class="mui-media-body">{$menu.name|default=''}</div>
+                            </a>
+                        </li>
+                    </if>
+                </navigationMenu>
+                <navigationFolder root="li" class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="{$menu.href|default=''}" target="{$menu.target|default=''}">
+                        <img class="mui-icon" src="{:cmf_get_image_preview_url($menu.image)}" alt="{$menu.name|default=''}">
+                        <div class="mui-media-body">{$menu.name|default=''}</div>
+                    </a>
+                </navigationFolder>
+            </navigation>
         </ul> 
     </div>
 
@@ -54,7 +49,11 @@
     <include file="public@footer"/>
 </div>
 <!-- /container -->
-<include file="public@scripts"/>
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+</script>
 <hook name="before_body_end"/>
 </body>
 </html>

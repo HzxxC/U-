@@ -146,6 +146,11 @@ class NavMenuController extends AdminBaseController
             $arrData['href'] = base64_decode($arrData['href']);
         }
 
+        // 缩略图
+        if (!empty($arrData['image'])) {
+            $arrData['image'] = cmf_asset_relative_url($arrData['image']);
+        }
+
         $navMenuModel->allowField(true)->isUpdate(false)->save($arrData);
 
         $this->success(lang("EDIT_SUCCESS"), url("NavMenu/index", ['nav_id' => $arrData['nav_id']]));
@@ -238,7 +243,12 @@ class NavMenuController extends AdminBaseController
             $arrData['href'] = base64_decode($arrData['href']);
         }
 
-        $navMenuModel->update($arrData, ["id" => $intId], true);
+        // 缩略图
+        if (!empty($arrData['image'])) {
+            $arrData['image'] = cmf_asset_relative_url($arrData['image']);
+        }
+
+        $navMenuModel->isUpdate(true)->allowField(true)->save($arrData, ['id' => $intId]);
 
         $this->success(lang("EDIT_SUCCESS"), url("NavMenu/index", ['nav_id' => $arrData['nav_id']]));
 
