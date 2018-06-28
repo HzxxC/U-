@@ -101,11 +101,13 @@ class PortalPostModel extends Model
 
         $this->categories()->save($categories);
 
-        $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
+        if (!empty($data['post_keywords'])) {
+            $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
 
-        $keywords = explode(',', $data['post_keywords']);
+            $keywords = explode(',', $data['post_keywords']);
 
-        $this->addTags($keywords, $this->id);
+           $this->addTags($keywords, $this->id);
+        }
 
         return $this;
 
@@ -144,12 +146,13 @@ class PortalPostModel extends Model
             $this->categories()->attach(array_values($newCategoryIds));
         }
 
+        if (!empty($data['post_keywords'])) {
+            $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
 
-        $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
+            $keywords = explode(',', $data['post_keywords']);
 
-        $keywords = explode(',', $data['post_keywords']);
-
-        $this->addTags($keywords, $data['id']);
+            $this->addTags($keywords, $data['id']);
+        }
 
         return $this;
 

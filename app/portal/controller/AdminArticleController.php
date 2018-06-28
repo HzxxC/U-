@@ -59,6 +59,39 @@ class AdminArticleController extends AdminBaseController
     }
 
     /**
+     * 爱心超市管理
+     * @return [type] [description]
+     */
+    public function coles()
+    {
+        $param = $this->request->param();
+
+        $categoryId = $this->request->param('category', 0, 'intval');
+
+        // 类型为商品
+        $param['post_type'] = 3;
+        
+        $postService = new PostService();
+        $data        = $postService->adminArticleList($param, false, 3);
+
+        $data->appends($param);
+
+        $portalCategoryModel = new PortalCategoryModel();
+        $categoryTree        = $portalCategoryModel->adminCategoryTree($categoryId);
+
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
+        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('articles', $data->items());
+        $this->assign('category_tree', $categoryTree);
+        $this->assign('category', $categoryId);
+        $this->assign('page', $data->render());
+
+
+        return $this->fetch();
+    }
+
+    /**
      * 添加文章
      * @adminMenu(
      *     'name'   => '添加文章',
@@ -73,6 +106,20 @@ class AdminArticleController extends AdminBaseController
      */
     public function add()
     {
+        $themeModel        = new ThemeModel();
+        $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
+        $this->assign('article_theme_files', $articleThemeFiles);
+        return $this->fetch();
+    }
+
+    /**
+     * 添加爱心超市商品
+     */
+    public function add_coles()
+    {
+        $categoryId = $this->request->param('category', 0, 'intval');
+        $this->assign('category', $categoryId);
+       
         $themeModel        = new ThemeModel();
         $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
         $this->assign('article_theme_files', $articleThemeFiles);
@@ -139,7 +186,7 @@ class AdminArticleController extends AdminBaseController
             hook('portal_admin_after_save_article', $hookParam);
 
 
-            $this->success('添加成功!', url('AdminArticle/edit', ['id' => $portalPostModel->id]));
+            $this->success('添加成功!', url('AdminArticle/'.$data['post']['type'], ['category' => $data['post']['categories']]));
         }
 
     }
@@ -172,6 +219,25 @@ class AdminArticleController extends AdminBaseController
         $this->assign('post', $post);
         $this->assign('post_categories', $postCategories);
         $this->assign('post_category_ids', $postCategoryIds);
+
+        return $this->fetch();
+    }
+
+    public function edit_coles()
+    {
+        $id = $this->request->param('id', 0, 'intval');
+
+        $portalPostModel = new PortalPostModel();
+        $post            = $portalPostModel->where('id', $id)->find();
+        $postCategories  = $post->categories()->alias('a')->column('a.name', 'a.id');
+        $postCategoryIds = implode(',', array_keys($postCategories));
+
+        $themeModel        = new ThemeModel();
+        $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
+       
+        $this->assign('article_theme_files', $articleThemeFiles);
+        $this->assign('post', $post);
+        $this->assign('postCategoryIds', $postCategoryIds);
 
         return $this->fetch();
     }

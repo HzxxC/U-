@@ -54,11 +54,11 @@ class ApiService
         $where = [
             'post.published_time' => [['> time', 0], ['<', time()]],
             'post.post_status'    => 1,
-            'post.post_type'      => 1,
+            // 'post.post_type'      => $param['postType'],
             'post.delete_time'    => 0
         ];
 
-        $paramWhere = empty($param['where']) ? '' : $param['where'];
+        $paramWhere  = empty($param['where']) ? '' : $param['where'];
 
         $limit       = empty($param['limit']) ? 10 : $param['limit'];
         $order       = empty($param['order']) ? '' : $param['order'];

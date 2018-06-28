@@ -66,10 +66,11 @@ class PostService
             $where['a.post_title'] = ['like', "%$keyword%"];
         }
 
+        $postType = empty($filter['post_type']) ? 1 : intval($filter['post_type']);
         if ($isPage) {
             $where['a.post_type'] = 2;
         } else {
-            $where['a.post_type'] = 1;
+            $where['a.post_type'] = $postType;
         }
 
         $portalPostModel = new PortalPostModel();
@@ -83,14 +84,14 @@ class PostService
 
     }
 
-    public function publishedArticle($postId, $categoryId = 0)
+    public function publishedArticle($postId, $categoryId = 0, $postType = 1)
     {
         $portalPostModel = new PortalPostModel();
 
         if (empty($categoryId)) {
 
             $where = [
-                'post.post_type'      => 1,
+                'post.post_type'      => $postType,
                 'post.published_time' => [['< time', time()], ['> time', 0]],
                 'post.post_status'    => 1,
                 'post.delete_time'    => 0,
@@ -102,7 +103,7 @@ class PostService
                 ->find();
         } else {
             $where = [
-                'post.post_type'       => 1,
+                'post.post_type'       => $postType,
                 'post.published_time'  => [['< time', time()], ['> time', 0]],
                 'post.post_status'     => 1,
                 'post.delete_time'     => 0,
@@ -124,14 +125,14 @@ class PostService
     }
 
     //上一篇文章
-    public function publishedPrevArticle($postId, $categoryId = 0)
+    public function publishedPrevArticle($postId, $categoryId = 0, $postType = 1)
     {
         $portalPostModel = new PortalPostModel();
 
         if (empty($categoryId)) {
 
             $where = [
-                'post.post_type'      => 1,
+                'post.post_type'      => $postType,
                 'post.published_time' => [['< time', time()], ['> time', 0]],
                 'post.post_status'    => 1,
                 'post.delete_time'    => 0,
@@ -145,7 +146,7 @@ class PostService
 
         } else {
             $where = [
-                'post.post_type'       => 1,
+                'post.post_type'       => $postType,
                 'post.published_time'  => [['< time', time()], ['> time', 0]],
                 'post.post_status'     => 1,
                 'post.delete_time'     => 0,
@@ -168,14 +169,14 @@ class PostService
     }
 
     //下一篇文章
-    public function publishedNextArticle($postId, $categoryId = 0)
+    public function publishedNextArticle($postId, $categoryId = 0, $postType = 1)
     {
         $portalPostModel = new PortalPostModel();
 
         if (empty($categoryId)) {
 
             $where = [
-                'post.post_type'      => 1,
+                'post.post_type'      => $postType,
                 'post.published_time' => [['< time', time()], ['> time', 0]],
                 'post.post_status'    => 1,
                 'post.delete_time'    => 0,
@@ -188,7 +189,7 @@ class PostService
                 ->find();
         } else {
             $where = [
-                'post.post_type'       => 1,
+                'post.post_type'       => $postType,
                 'post.published_time'  => [['< time', time()], ['> time', 0]],
                 'post.post_status'     => 1,
                 'post.delete_time'     => 0,

@@ -1910,6 +1910,11 @@ function cmf_data_to_xml($data, $item = 'item', $id = 'id')
     return $xml;
 }
 
+/**
+ * 判断 会员是否已完善信息
+ * @param  [int] $uid [会员ID]
+ * @return [type]      [description]
+ */
 function cmf_is_complete($uid) {
 
     if (!empty($uid)) {
@@ -1918,4 +1923,13 @@ function cmf_is_complete($uid) {
     }
 
     return false;
+}
+
+/**
+ * 通过分类ID获得分类名称
+ * @param  [type] $id [description]
+ * @return [type]     [description]
+ */
+function cmf_get_category_name_by_id($id) {
+    return Db::name('portal_category') -> where('id', $id) -> value('name');
 }
