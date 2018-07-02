@@ -576,6 +576,22 @@
         });
     }
 
+    // bootstrap日期选择器 时间选择器
+    var bootstrapTimeInput = $("input.js-bootstrap-time");
+    if (bootstrapTimeInput.length) {
+        Wind.css('bootstrapDatetimePicker');
+        Wind.use('bootstrapDatetimePicker', function () {
+            bootstrapTimeInput.datetimepicker({
+                language: 'zh-CN',
+                format: 'hh:ii',
+                minView: 'hour',
+                startView: 'hour',
+                todayBtn: 1,
+                autoclose: true
+            });
+        });
+    }
+
     //tab
     var tabs_nav = $('ul.js-tabs-nav');
     if (tabs_nav.length) {
@@ -960,7 +976,6 @@ function openIframeLayer(url, title, options) {
         move: false,
         content: url,
         yes: function (index, layero) {
-            //do something
             layer.close(index); //如果设定了yes回调，需进行手工关闭
         }
     };

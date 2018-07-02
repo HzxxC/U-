@@ -123,4 +123,5 @@ class PublicController extends AdminBaseController
         session('ADMIN_ID', null);
         return redirect(url('/', [], false, true));
     }
+
 }

@@ -29,8 +29,8 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li><a href="{:url('AdminArticle/coles', array('category' => $category, 'type'=> $postType))}">所有兑换商品</a></li>
-        <li class="active"><a href="{:url('AdminArticle/add_coles', array('category' => $category, 'type'=> $postType))}">添加兑换商品</a></li>
+        <li><a href="{:url('AdminArticle/track', array('category' => $category, 'type'=> $postType))}">所有足迹活动</a></li>
+        <li class="active"><a href="{:url('AdminArticle/add_track', array('category' => $category, 'type'=> $postType))}">添加足迹活动</a></li>
     </ul>
     <form action="{:url('AdminArticle/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
         <div class="row">
@@ -44,37 +44,57 @@
                                    readonly/>
                             <input class="form-control" type="hidden" value="{$category}"
                                    name="post[categories]"/>
-                            <input class="form-control" type="hidden" value="coles"
+                            <input class="form-control" type="hidden" value="track"
                                    name="post[type]"/>
-                            <input class="form-control" type="hidden" value="3"
+                            <input class="form-control" type="hidden" value="{$postType}"
                                    name="post[post_type]"/>
                         </td>
                     </tr>
                     <tr>
-                        <th>商品名称<span class="form-required">*</span></th>
+                        <th>活动名称<span class="form-required">*</span></th>
                         <td>
                             <input class="form-control" type="text" name="post[post_title]"
-                                   id="title" required value="" placeholder="请输入商品名称"/>
+                                   id="title" required value="" placeholder="请输入足迹活动名称"/>
                         </td>
                     </tr>
                     <tr>
-                        <th>商品数量</th>
+                        <th>活动日期<span class="form-required">*</span></th>
                         <td>
-                            <input class="form-control" type="number" name="post[quantity]" id="quantity"  min="0" value="" style="width:120px;">
-                            <p class="help-block">商品数量为0时，表示该商品不限数量</p>
+                           <input class="form-control js-bootstrap-date" type="text" name="post[more][active_date]" style="width:300px;"
+                                   id="title" required value="" placeholder="活动日期"/>
                         </td>
                     </tr>
                     <tr>
-                        <th>兑换积分</th>
+                        <th>活动时间<span class="form-required">*</span></th>
                         <td>
-                            <input class="form-control" type="number" name="post[score]" id="score"  min="0" value=""  style="width:120px;">
-                            <p class="help-block">兑换积分为0时，表示该商品免费兑换</p>
+                            <input class="form-control js-bootstrap-time" type="text" name="post[more][start_time]" style="display:inline-block; width:300px;"
+                                   id="title" required value="" placeholder="活动开始时间"/>&nbsp;&nbsp;--&nbsp;&nbsp;
+                            <input class="form-control js-bootstrap-time" type="text" name="post[more][end_time]" style="display:inline-block; width:300px;"
+                                   id="title" required value="" placeholder="活动结束时间"/>
                         </td>
                     </tr>
                     <tr>
-                        <th>内容</th>
+                        <th>活动积分<span class="form-required">*</span></th>
                         <td>
-                            <script type="text/plain" id="content" name="post[post_content]"></script>
+                           <input class="form-control" type="text" name="post[score]" style="width:300px;"
+                                   id="title" required value="" placeholder="每小时获得积分数"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>活动地点</th>
+                        <td>
+                            <div style="display: inline-block;">
+                                <input class="form-control" type="text" id="address" name="post[more][address]" style="width:500px;" required
+                                   value="" placeholder="详细地址" 
+                                   readonly/>
+                                <input class="form-control" type="text" id="lat" name="post[more][lat]" style="width:500px;" required
+                                   value="" placeholder="经度" 
+                                   readonly/>
+                                <input class="form-control" type="text" id="lng" name="post[more][lng]" style="width:500px;" required
+                                   value="" placeholder="纬度" 
+                                   readonly/>
+                            </div>
+                            <a href="javascript:parent.openIframeLayer('{:url('AdminArticle/location')}','活动地址',{area: ['35%', '70%'], btn:['确认','关闭'], yes: function(index) {setLocation(index);}});" class="btn btn-default" style="position: relative; top: -36px; left: 45px;">获取活动地点</a>
                         </td>
                     </tr>
                     <tr>
@@ -83,15 +103,6 @@
                             <ul id="photos" class="pic-list list-unstyled form-inline"></ul>
                             <a href="javascript:uploadMultiImage('图片上传','#photos','photos-item-tpl');"
                                class="btn btn-default btn-sm">选择图片</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>附件</th>
-                        <td>
-                            <ul id="files" class="pic-list list-unstyled form-inline">
-                            </ul>
-                            <a href="javascript:uploadMultiFile('附件上传','#files','files-item-tpl','file');"
-                               class="btn btn-sm btn-default">选择文件</a>
                         </td>
                     </tr>
                 </table>
@@ -193,6 +204,17 @@
                 layer.close(index); //如果设定了yes回调，需进行手工关闭
             }
         });
+    }
+
+    function setLocation(index) {
+        //当点击‘确定’按钮的时候，获取弹出层返回的值
+        var res = parent.window["layui-layer-iframe" + index].callbackdata();
+
+        $('#address').val(res.poiaddress+res.poiname);
+        $('#lat').val(res.latlng.lat);
+        $('#lng').val(res.latlng.lng);
+
+        parent.layer.close(index);
     }
 </script>
 </body>
