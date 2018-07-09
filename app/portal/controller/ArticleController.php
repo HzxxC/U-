@@ -14,6 +14,7 @@ use cmf\controller\HomeBaseController;
 use app\portal\model\PortalCategoryModel;
 use app\portal\service\PostService;
 use app\portal\model\PortalPostModel;
+use app\portal\model\UserOperateModel;
 use think\Db;
 
 class ArticleController extends HomeBaseController
@@ -26,15 +27,16 @@ class ArticleController extends HomeBaseController
 
         $articleId  = $this->request->param('id', 0, 'intval');
         $categoryId = $this->request->param('cid', 0, 'intval');
-        $article    = $postService->publishedArticle($articleId, $categoryId);
+        $type       = $this->request->param('type', 1, 'intval');
+        $article    = $postService->publishedArticle($articleId, $categoryId, $type);
 
         if (empty($article)) {
             abort(404, '文章不存在!');
         }
 
 
-        $prevArticle = $postService->publishedPrevArticle($articleId, $categoryId);
-        $nextArticle = $postService->publishedNextArticle($articleId, $categoryId);
+        $prevArticle = $postService->publishedPrevArticle($articleId, $categoryId, $type);
+        $nextArticle = $postService->publishedNextArticle($articleId, $categoryId, $type);
 
         $tplName = 'article';
 
@@ -89,6 +91,69 @@ class ArticleController extends HomeBaseController
         } else {
             $this->error("您已赞过啦！");
         }
+    }
+
+    // 会员操作
+    public function user_operate() {
+
+         $data = $this->request->param();
+
+         $userOperate = new UserOperateModel();
+
+         if ($user = cmf_get_current_user()) {
+            
+            // TODO: 校验会员是否已经报名
+            
+            // TODO: 校验会员积分是否充足
+
+            $userOperate->insertUserOperate($user['id'], $data);
+
+            return ['is_err' => 1, 'msg' => '成功'];
+
+         } else {
+            return ['is_err' => 0, 'msg' => '请登录'];
+         }
+
+    }
+
+    /**
+     * 爱的足迹 位置判断
+     * @return [type] [description]
+     */
+    public function track_location() {
+
+        $userOperate = new UserOperateModel();
+        
+        if ($this->request->isPost()) {
+            
+            $data   = $this->request->param();
+
+            $uid = cmf_get_current_user_id();
+            $today_track =  cmf_get_track($data['pid']);
+
+            // 判断会员是否在区域范围内
+            if (1) {
+
+                //点击开始
+                if ($data['type'] == 'start') { 
+                    // 添加用户操作
+                    $userOperate->insertUserOperate($uid, $today_track);
+                }
+
+                //点击结束
+                if ($data['type'] == 'end') {
+                   
+                    $param['id'] = $data['id'];
+                    $param['more']['join_start_time'] = $data['join_strat_time'];
+                    // cmf_update_user_operater($param)
+                }
+            } else {
+
+            }
+
+            return ['code'=>1, 'data'=>$today_track, 'msg'=>'success'];
+        }
+
     }
 
 }

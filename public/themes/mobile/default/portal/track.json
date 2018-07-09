@@ -1,0 +1,9 @@
+{
+    "name": "爱的足迹 列表页",
+    "action": "portal/List/index",
+    "description": "爱的足迹 列表模板文件",
+    "order": 10.0,
+    "more": {
+       
+    }
+}

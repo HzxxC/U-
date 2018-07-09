@@ -26,6 +26,9 @@ class ListController extends HomeBaseController
 
         $listTpl = empty($category['list_tpl']) ? 'list' : $category['list_tpl'];
 
+        if(cmf_is_wechat())
+			$this->assign('signPackage',wechat()->getJsSign(request()->url(true)));	
+
         return $this->fetch('/' . $listTpl);
     }
 

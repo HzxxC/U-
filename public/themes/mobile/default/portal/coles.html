@@ -45,14 +45,14 @@
                              categoryIds="$category.id"
                              returnVarName="articles_data">
                  <li class="mui-table-view-cell mui-media">
-                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id']))}">
+                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}">
                         <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
                         <div class="mui-media-body">
                             {$vo.post_title}
                             <p class='mui-ellipsis'>兑换积分：{$vo.score}</p>
                         </div>
                     </a>
-                    <a href="" class="mui-btn mui-btn-primary">兑换</a>
+                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}" class="mui-btn mui-btn-primary">兑换</a>
                 </li>            
             </portal:articles>
         </ul>

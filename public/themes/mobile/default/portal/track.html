@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white" id="relay-list">
+
+    <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">{$category.name}</h1>
+    </header>
+    <div class="mui-content">
+        <php>
+            // 获得今日足迹活动
+            $uid = cmf_get_current_user_id();
+            $today_track = cmf_get_today_track($uid);
+            // 判断用户是否已参加，获得服务时长
+        </php>
+        <a id="start">点击开始</a>
+        <ul class="mui-table-view mui-table-view-chevron" id="list">
+            <php>
+                $where=[
+                    'post.create_time'=>['egt',0],
+                    'post.post_type'=>5,
+                    'active_start_time' => ['gt', time()],
+                ];
+                $page=[
+                    'list_rows'=>10,
+                    'next'=>'下一页',
+                    'prev'=>'上一页'
+                ];
+            </php>
+            <portal:articles item="vo" where="$where" order="post.create_time DESC" page="$page"
+                             relation="categories"
+                             categoryIds="$category.id"
+                             returnVarName="articles_data">
+                 <li class="mui-table-view-cell mui-media">
+                        <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
+                        <div class="mui-media-body">
+                            {$vo.post_title}
+                        </div>
+                </li>            
+            </portal:articles>
+        </ul>
+    </div>
+
+<div class="container">
+    <include file="public@footer"/>
+</div>
+<if condition="cmf_is_wechat()">
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>    
+<script type="text/javascript">
+wx.config({
+    debug: false,            
+    appId: '{$signPackage.appId}',
+    timestamp: {$signPackage.timestamp},
+    nonceStr: '{$signPackage.nonceStr}',
+    signature: '{$signPackage.signature}',            
+    jsApiList: [
+        // 所有要调用的 API 都要加到这个列表中
+        'checkJsApi',
+        'openLocation',
+        'getLocation'
+    ]
+}); 
+        
+wx.ready(function(){
+    
+    wx.checkJsApi({
+        jsApiList: [
+            'getLocation'
+        ],
+        success: function (res) {
+            // alert(JSON.stringify(res));
+            // alert(JSON.stringify(res.checkResult.getLocation));
+            if (res.checkResult.getLocation == false) {
+                alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
+                return;
+            }
+        }
+    });
+
+    wx.getLocation({
+        success: function (res) {
+            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+            var speed = res.speed; // 速度，以米/每秒计
+            var accuracy = res.accuracy; // 位置精度
+        },
+        cancel: function (res) {
+            alert('用户拒绝授权获取地理位置');
+        }
+    });
+
+    document.getElementById('start').addEventListener('tap', function() {
+        wx.getLocation({
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                mui.ajax('{:cmf_url("portal/Article/track_location")}',{
+                    data:{
+                        pid: '{$today_track.id}',
+                        lat: latitude,
+                        lng: longitude,
+                        type: 'start',
+                    },
+                    dataType:'json',//服务器返回json格式数据
+                    type:'post',//HTTP请求类型
+                    timeout:10000,//超时时间设置为10秒；
+                    headers:{'Content-Type':'application/json'},                  
+                    success:function(data){
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                    },
+                    error:function(xhr,type,errorThrown){
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            },
+            cancel: function (res) {
+                alert('用户拒绝授权获取地理位置');
+            }
+        });
+    });
+
+});         
+       
+function callLocation() {
+
+}
+</script> 
+</if>
+<!-- /container -->
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

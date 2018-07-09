@@ -114,6 +114,40 @@ class PortalPostModel extends Model
     }
 
     /**
+     * 手机端管理添加文章
+     * @param array $data 文章数据
+     * @param array|string $categories 文章分类 id
+     * @return $this
+     */
+    public function homeAddArticle($data, $categories)
+    {
+        $data['user_id'] = cmf_get_current_user_id();
+
+        if (!empty($data['more']['thumbnail'])) {
+            $data['more']['thumbnail'] = cmf_asset_relative_url($data['more']['thumbnail']);
+        }
+
+        $this->allowField(true)->data($data, true)->isUpdate(false)->save();
+
+        if (is_string($categories)) {
+            $categories = explode(',', $categories);
+        }
+
+        $this->categories()->save($categories);
+
+        if (!empty($data['post_keywords'])) {
+            $data['post_keywords'] = str_replace('，', ',', $data['post_keywords']);
+
+            $keywords = explode(',', $data['post_keywords']);
+
+           $this->addTags($keywords, $this->id);
+        }
+
+        return $this;
+
+    }
+
+    /**
      * 后台管理编辑文章
      * @param array $data 文章数据
      * @param array|string $categories 文章分类 id

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$article.post_title}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''}">
+
+    <!-- 加载boostrap -->
+    <link href="__TMPL__/public/assets/simpleboot3/themes/simpleboot3/bootstrap.min.css" rel="stylesheet">
+    <include file="public@head"/>
+
+    <style>
+        a:hover, a:focus {
+            color: #fff;
+            text-decoration: none;
+        }
+        #article_content img {
+            height: auto !important;
+            max-width: 100%;
+        }
+
+        #article_content {
+            word-wrap: break-word;
+        }
+    </style>
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white" id="dealer">
+    <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">{$article.post_title|cmf_msubstr=0,10}</h1>
+    </header>
+
+    <div class="mui-content">
+        <div class="mui-card">
+             <notempty name="article.more.photos">
+                 <div id="slider" class="mui-slider" >
+                    <div class="mui-slider-group">
+                        <volist name="article.more.photos" id="vo">
+                            <div class="mui-slider-item mui-slider-item-duplicate">
+                                <a href="">
+                                    <img src="{:cmf_get_image_url($vo.url)}">
+                                </a>
+                            </div>
+                        </volist>
+                    </div>
+                </div>
+            </notempty>
+            <div class="mui-card-content">
+                <div class="header mui-clearfix">
+                    <h4>{$article.post_title}</h4>
+                    <p>{$article.more.address}</p>
+                </div>
+                <div class="mui-card-content-inner">
+                    <h5 class="content-header">{:cmf_content_header($article.post_type)}</h5>
+                    {$article.post_content}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- 弹框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">兑换</h4>
+          </div>
+          <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" id="username" placeholder="请输入姓名">
+                        <input type="hidden" name="type" value="{$article.post_type}" id="type">
+                    </div>
+                     <div class="form-group">
+                        <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入手机号">
+                    </div>
+                    <p>兑换需要：{$article.score}积分</p>
+                </form>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="conversion">确认兑换</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <include file="public@footer"/>
+</div>
+<include file="public@scripts"/>
+
+<script>
+    var type = "{$article.post_type}";
+    var pid = "{$article.id}";
+    var score = "{$article.score}";
+    //mui初始化
+    mui.init({
+        swipeBack: true //启用右滑关闭功能
+    });
+    // 弹框
+    document.getElementById("conversion").addEventListener('tap', function(e) {
+
+        var username = document.getElementById('username').value;
+        var phone = document.getElementById('phone').value;
+
+        if (isEmpty(username)) {
+            mui.toast('请输入姓名');
+        } else if (isEmpty(phone) || !isPoneAvailable(phone)) {
+            mui.toast('请输入正确的手机号');
+        } else {
+            mui.ajax('{:cmf_url("portal/Article/user_operate")}',{
+                data:{
+                    username: username,
+                    phone: phone,
+                    type: type,
+                    pid: pid,
+                    score: score
+                },
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    mui.toast(data.msg);
+                    $('#myModal').modal('hide');
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+    });
+
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        // 清空表单
+        
+    })
+
+    //判断字符是否为空的方法
+    function isEmpty(obj){
+
+        var regu = "^[ ]+$";
+        var re = new RegExp(regu);
+
+        if(typeof obj == "undefined" || obj == null || obj == "" || re.test(obj)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    // 校验手机好
+    function isPoneAvailable(phone) {
+        var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+        
+        return  myreg.test(phone);
+    }
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

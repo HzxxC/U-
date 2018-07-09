@@ -29,9 +29,9 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li><a href="{:url('AdminArticle/coles')}">所有兑换商品</a></li>
+        <li><a href="{:url('AdminArticle/coles', array('category' => $postCategoryIds, 'type'=> $post['post_type']))}">所有兑换商品</a></li>
         <li>
-            <a href="{:url('AdminArticle/add_coles')}">添加兑换商品</a>
+            <a href="{:url('AdminArticle/add_coles', array('category' => $postCategoryIds, 'type'=> $post['post_type']))}">添加兑换商品</a>
         </li>
         <li class="active"><a href="#">编辑商品</a></li>
     </ul>

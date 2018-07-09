@@ -296,6 +296,7 @@ final class UloveWechat extends Wechat
 			$user_info['user_nickname']	= $user['user_nickname'];
 			// 添加 用户完善信息状态字段 complete
 			$user_info['complete']  	= $user['complete'];
+			$user_info['is_swear']		= $user['is_swear'];
 			
 			session('user',$user_info);
 			
@@ -354,6 +355,7 @@ final class UloveWechat extends Wechat
 			$user['openid']			= $data['wechat_openid'];
 			$user['user_nickname']	= $data['user_nickname'];
 			$user['complete']  		= $data['complete'];
+			$user['is_swear']		= $data['is_swear'];
 			
 			// 设置session
 			cmf_update_current_user($user);

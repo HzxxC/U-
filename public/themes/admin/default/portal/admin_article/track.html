@@ -102,8 +102,8 @@
                                target="_blank">{$vo.post_title}</a>
                         </notempty>
                     </td>
-                    <td>{$vo.more.active_date}</td>
-                    <td>{$vo.more.start_time}~{$vo.more.end_time}</td>
+                    <td>{:date('Y-m-d',$vo['active_start_time'])}</td>
+                    <td>{:date('H:i',$vo['active_start_time'])}~{:date('H:i',$vo['active_end_time'])}</td>
                     <td>{$vo.score|default=0}</td>
                     <td>
                         <notempty name="vo.more.thumbnail">

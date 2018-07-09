@@ -7,6 +7,17 @@
 body {
 	padding-top: 0;
 }
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px dashed;
+    border-top: 4px solid\9;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
 
 .mui-title {
 	font-size: 14px;
@@ -76,6 +87,541 @@ body#relay {
 #relay-list #list {
 	padding-top: 15px;
 }
+
+/* dynamic-list */
+#dynamic-list .mui-table-view-chevron .mui-table-view-cell {
+	padding-right: 115px;
+}
+
+#dynamic-list .mui-table-view-chevron .mui-table-view-cell>a:not(.mui-btn) {
+	margin-right: -115px;
+}
+
+#dynamic-list .mui-table-view-cell p {
+	font-size: 12px;
+}
+
+/* Card-list */
+#card-list .mui-table-view:after {
+	background-color: transparent;
+}
+
+#card-list .mui-table-view-cell:first-child {
+	padding: 20px 15px;
+}
+
+#card-list .mui-table-view-cell:after {
+	background-color: transparent;
+}
+
+#card-list .mui-table-view-cell:not(:first-child) {
+    background-color: #e6e4e4;
+    margin: 0 30px;
+}
+
+#card-list .mui-table-view .title {
+	position: relative;
+	font-size: 16px;
+	color: #ff5d5d;
+	text-align: center;
+	margin: 0 10px;
+	font-weight: normal;
+	margin-bottom: 25px;
+}
+
+#card-list .mui-table-view-cell p {
+	font-size: 12px;
+}
+
+#card-list .mui-table-view-cell .mui-media-body {
+	color: #ff5d5d;
+}
+
+#card-list .mui-table-view-cell:not(:first-child) .mui-media-body {
+	font-size: 14px;
+}
+
+.mui-table-view-cell>.mui-btn {
+	padding: 4px 12px;
+	background-color: #ff5d5d;
+	border-color: #ff5d5d;
+}
+
+#card-list .bottom-arrow {
+	position: absolute;
+    bottom: -5px;
+    left: 48.5%;
+	transform: scale3d(0.5, 0.5, 0.5);
+}
+
+.chevron {
+  position: absolute;
+  width: 28px;
+  height: 3px;
+  opacity: 1;
+}
+
+.chevron:before,
+.chevron:after {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 51%;
+  background: #ff5d5d;
+}
+
+.chevron:before {
+  left: 0;
+  transform: skew(0deg, 30deg);
+}
+
+.chevron:after {
+  right: 0;
+  width: 50%;
+  transform: skew(0deg, -30deg);
+}
+
+.chevron:first-child {
+  transform: translateY(6px);
+}
+
+#card-list .mui-table-view .title:before {
+	display: inline-block;
+	content: '';
+	position: absolute;
+	width: 40%;
+    left: 0;
+    border-top: 1px dashed #8a8a8a;
+    top: 10px;
+}
+
+#card-list .mui-table-view .title:after {
+	display: inline-block;
+	content: '';
+	position: absolute;
+	width: 40%;
+    right: 0;
+    border-top: 1px dashed #8a8a8a;
+    top: 10px;
+}
+
+/* memory-list */
+
+.mui-views,
+.mui-view,
+.mui-pages,
+.mui-page,
+.mui-page-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #efeff4;
+}
+.mui-pages {
+    top: 46px;
+    height: auto;
+}
+.mui-scroll-wrapper,
+.mui-scroll {
+    background-color: #efeff4;
+}
+.mui-page.mui-transitioning {
+    -webkit-transition: -webkit-transform 300ms ease;
+    transition: transform 300ms ease;
+}
+.mui-page-left {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+.mui-ios .mui-page-left {
+    -webkit-transform: translate3d(-20%, 0, 0);
+    transform: translate3d(-20%, 0, 0);
+}
+.mui-navbar {
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    height: 44px;
+    background-color: #f7f7f8;
+}
+.mui-navbar .mui-bar {
+    position: absolute;
+    text-align: center;
+}
+.mui-android .mui-navbar-inner.mui-navbar-left {
+    opacity: 0;
+}
+.mui-ios .mui-navbar-left .mui-left,
+.mui-ios .mui-navbar-left .mui-center,
+.mui-ios .mui-navbar-left .mui-right {
+    opacity: 0;
+}
+.mui-navbar .mui-btn-nav {
+    -webkit-transition: none;
+    transition: none;
+    -webkit-transition-duration: .0s;
+    transition-duration: .0s;
+}
+.mui-navbar .mui-bar .mui-title {
+    display: inline-block;
+    width: auto;
+}
+.mui-page-shadow {
+    position: absolute;
+    right: 100%;
+    top: 0;
+    width: 16px;
+    height: 100%;
+    z-index: -1;
+    content: '';
+}
+.mui-page-shadow {
+    background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+}
+.mui-navbar-inner.mui-transitioning,
+.mui-navbar-inner .mui-transitioning {
+    -webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+.mui-page {
+    display: none;
+}
+.mui-pages .mui-page {
+    display: block;
+}
+.mui-page .mui-table-view:first-child {
+    margin-top: 15px;
+}
+.mui-page .mui-table-view:last-child {
+    margin-bottom: 30px;
+}
+.mui-table-view {
+    margin-top: 20px;
+}
+.mui-table-view span.mui-pull-right {
+    color: #999;
+}
+.mui-table-view-divider {
+    background-color: #efeff4;
+    font-size: 14px;
+}
+.mui-table-view-divider:before,
+.mui-table-view-divider:after {
+    height: 0;
+}
+.head {
+    height: 40px;
+}
+#head {
+    line-height: 40px;
+}
+.head-img {
+    width: 40px;
+    height: 40px;
+}
+#head-img1 {
+    position: absolute;
+    bottom: 10px;
+    right: 40px;
+    width: 40px;
+    height: 40px;
+}
+.update {
+    font-style: normal;
+    color: #999999;
+    margin-right: -25px;
+    font-size: 15px
+}
+.mui-fullscreen {
+    position: fixed;
+    z-index: 20;
+    background-color: #000;
+}
+.mui-ios .mui-navbar .mui-bar .mui-title {
+    position: static;
+}
+/*问题反馈在setting页面单独的css*/
+#feedback .mui-popover{
+    position: fixed;
+}
+#feedback .mui-table-view:last-child {
+    margin-bottom: 0px;
+}
+#feedback .mui-table-view:first-child {
+    margin-top: 0px;
+}
+
+.mui-plus.mui-plus-stream .mui-stream-hidden{
+    display: none !important;
+}
+
+#memory-list .mui-bar .mui-btn-link {
+	font-size: 14px;
+	color: #fff;
+}
+#memory-list .mui-content>.mui-table-view:first-child {
+	margin-top: 0;
+}
+#feedback .mui-popover{
+	position: fixed;
+}
+#feedback .mui-table-view:last-child {
+    margin-bottom: 0px;
+}
+#feedback .mui-table-view:first-child {
+    margin-top: 0px;
+}
+.mui-plus.mui-plus-stream .mui-stream-hidden{
+	display: none !important;
+}
+
+#memory-list .mui-page-content {
+	padding: 30px 25px 0;
+}
+
+#memory-list input[type=text], #memory-list textarea {
+	font-size: 12px;
+}
+
+#memory-list #feedback button.mui-btn {
+	width: 100%;
+    height: 40px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    text-align: left;
+    color: #6d6d6d;
+    border: none;
+}
+
+#memory-list #feedback button.mui-btn .caret{
+	position: absolute;
+    right: 15px;
+    top: 20px;
+}
+
+#memory-list .feedback textarea {
+	height: 210px;
+}
+
+#memory-list #feedback button#sub {
+	margin-top: 30px;
+	background-color: #ff5d5d;
+	border-color: #ff5d5d;
+	text-align: center;
+    color: #fff;
+}
+
+#photos {
+	width: 100%;
+    background-size: cover;
+    overflow: hidden;
+    margin: 0;
+    background: #fff;
+    margin-top: 15px;
+    list-style: none;
+}
+
+#photos .mui-table-view-cell > .mui-btn.nui-btn.nui-btn-primary {
+	background-color: #007aff;
+    border-color: #007aff;
+}
+
+#openUploadImg {
+    background-color: rgba(255, 165, 165, .5);
+    display: block;
+    position: relative;
+    padding: 8px 15px 8px 45px;
+    font-size: 12px;
+    color: #333;
+}
+#openUploadImg:before {
+	display: block;
+	content: '';
+	width: 32px;
+	height: 32px;
+	background-image: url(../images/iconfont-tianjia.png);
+	background-size: 100% 100%;
+	position: absolute;
+	top: 3px;
+	left: 7px;
+}
+
+/* Detail */
+#detail .mui-card {
+	margin: 0;
+}
+
+#detail .mui-card .mui-card-content .header, #dealer .mui-card .mui-card-content .header {
+	margin: 15px 15px 0;
+	padding-bottom: 10px;
+	box-sizing: border-box;
+	border-bottom: 1px solid #ccc;
+}
+
+#detail .header h4 {
+	margin-bottom: 15px;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#detail .header .info {
+	padding: 6px 0;
+	width: 65%;
+}
+
+#detail .header .operate a.mui-btn {
+	padding: 4px 16px;
+	background-color: #ff5d5d;
+	border-color: #ff5d5d;
+}
+
+#detail .mui-card .mui-card-content .header p {
+	font-size: 14px;
+	margin-bottom: 0;
+}
+
+.mui-card .mui-card-content-inner h5.content-header {
+	position: relative;
+	font-size: 16px;
+	color: #484848;
+	margin-bottom: 15px;
+	padding-left: 12px;
+}
+
+.mui-card .mui-card-content-inner h5.content-header:before {
+	display: inline-block;
+	content: '';
+	width: 5px;
+	height: 16px;
+	border-radius: 6px;
+	position: absolute;
+	top: 0px;
+	left: 0;
+	background-color: #ff5d5d;
+}
+
+.mui-card-content-inner img {
+	width: 100%;
+}
+
+#detail .modal-dialog {
+	margin: 30% 25px 0;
+}
+
+#detail .modal-content {
+	border-radius: 4px;
+}
+
+#detail .modal .close {
+	margin: 0;
+	position: absolute;
+    right: 20px;
+    top: 18px;
+    color: #fff;
+    opacity: 1;
+}
+
+#detail .modal-header {
+	border-bottom: 0;
+	text-align: center;
+	color: #fff;
+	background-color: #ff5d5d;
+	border-top-left-radius: 4px; 
+	border-top-right-radius: 4px;
+}
+
+#detail .modal-body {
+	padding-bottom: 0;
+}
+
+#detail .modal-body  p {
+	padding-left: 5px;
+	margin-top: 10px;
+}
+
+#detail .modal-footer {
+	padding: 10px 20px;
+	border-top: 0;
+}
+
+#detail .modal-footer button.btn {
+	width: 100%;
+	border-radius: 4px;
+	background-color: #ff5d5d;
+}
+
+#detail .modal-title {
+	font-weight: 700;
+	letter-spacing: 4px;
+}
+
+#detail .form-horizontal .form-group {
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 0;
+}
+
+#detail .form-control {
+	margin-bottom: 4px;
+}
+
+/* dealer */
+#dealer .mui-content {
+	padding: 44px 20px 0;
+	background-color: #fff;
+}
+
+#dealer .mui-card {
+	margin: 0;
+	box-shadow: none;
+}
+
+/* swear */
+
+#swear .mui-content {
+	background-color: #fff;
+}
+
+#swear .mui-card-content {
+	padding: 40px 25px 15px;
+}
+
+#swear .mui-card-content .header h4 {
+	font-size: 18px;
+	font-weight: normal;
+	text-align: center;
+}
+
+#swear .mui-checkbox.mui-left label {
+	font-size: 12px;
+	color: #a9a5a5;
+}
+
+#swear .mui-checkbox.mui-left input[type=checkbox] {
+	top: 7px;
+	left: 36px;
+}
+
+#swear .mui-checkbox input[type=checkbox]:before, .mui-radio input[type=radio]:before {
+	font-size: 18px;
+	color: #ff5d5d;
+}
+
+#swear .mui-btn-primary {
+	background-color: #ff5d5d;
+	border-color: #ff5d5d;
+	left: 35%;
+	margin-top: 15px;
+}
+
 
 /* Register */
 #register .mui-content {

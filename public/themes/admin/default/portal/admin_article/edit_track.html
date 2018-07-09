@@ -49,6 +49,8 @@
                                    name="post[categories]"/>
                             <input class="form-control" type="hidden" value="track"
                                    name="post[type]"/>
+                            <input class="form-control" type="hidden" value="{$post.post_type}"
+                                   name="post[post_type]"/>
                         </td>
                     </tr>
                     <tr>
@@ -62,17 +64,17 @@
                     <tr>
                         <th>活动日期<span class="form-required">*</span></th>
                         <td>
-                           <input class="form-control js-bootstrap-date" type="text" name="post[more][active_date]" style="width:300px;"
-                                   id="title" required value="{$post.more.active_date}" placeholder="活动日期"/>
+                           <input class="form-control js-bootstrap-date" type="text" name="post[active_date]" style="width:300px;"
+                                   id="title" required value="{:date('Y-m-d',$post['active_start_time'])}" placeholder="活动日期"/>
                         </td>
                     </tr>
                     <tr>
                         <th>活动时间<span class="form-required">*</span></th>
                         <td>
-                            <input class="form-control js-bootstrap-time" type="text" name="post[more][start_time]" style="display:inline-block; width:300px;"
-                                   id="title" required value="{$post.more.start_time}" placeholder="活动开始时间"/>&nbsp;&nbsp;--&nbsp;&nbsp;
-                            <input class="form-control js-bootstrap-time" type="text" name="post[more][end_time]" style="display:inline-block; width:300px;"
-                                   id="title" required value="{$post.more.end_time}" placeholder="活动结束时间"/>
+                            <input class="form-control js-bootstrap-time" type="text" name="post[active_start_time]" style="display:inline-block; width:300px;"
+                                   id="title" required value="{:date('H:i',$post['active_start_time'])}" placeholder="活动开始时间"/>&nbsp;&nbsp;--&nbsp;&nbsp;
+                            <input class="form-control js-bootstrap-time" type="text" name="post[active_end_time]" style="display:inline-block; width:300px;"
+                                   id="title" required value="{:date('H:i',$post['active_end_time'])}" placeholder="活动结束时间"/>
                         </td>
                     </tr>
                     <tr>

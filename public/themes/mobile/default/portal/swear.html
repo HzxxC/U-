@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$page.post_title}</title>
+    <meta name="keywords" content="{$page.post_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$page.post_excerpt},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white" id="swear">
+
+    <header class="mui-bar mui-bar-nav">
+            <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+            <h1 class="mui-title">{$page.post_title}</h1>
+    </header>
+    <div class="mui-content">
+        <notempty name="page.more.photos">
+             <div id="slider" class="mui-slider" >
+                <div class="mui-slider-group">
+                    <volist name="page.more.photos" id="vo">
+                        <div class="mui-slider-item mui-slider-item-duplicate">
+                            <a href="">
+                                <img src="{:cmf_get_image_url($vo.url)}">
+                            </a>
+                        </div>
+                    </volist>
+                </div>
+            </div>
+        </notempty>   
+        <div class="mui-card-content">
+            <div class="header mui-clearfix">
+                <h4>{$page.post_excerpt}</h4>
+            </div>
+            <div class="mui-card-content-inner">
+                {$page.post_content}
+            </div>
+            <div class="mui-input-row mui-checkbox mui-left">
+                <label>已阅读并同意遵守《中国青年志愿者誓词》</label>
+                <input name="checkbox" value="" type="checkbox" checked="" id="swear-checkbox">
+            </div>
+            <if condition="$is_swear eq 1">
+                <a href="javascript:;" class="mui-btn mui-btn-primary">宣誓成功</a>
+                <else/>
+                <a href="javascript:;" id="swear-btn" class="mui-btn mui-btn-primary">完成宣誓</a>
+            </if>
+            
+        </div>    
+    </div>
+
+<div class="container">
+    <include file="public@footer"/>
+</div>
+<!-- /container -->
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+        swipeBack:true //启用右滑关闭功能
+    });
+    // 弹框
+    document.getElementById("swear-btn").addEventListener('tap', function(e) {
+
+        var checkbox = document.getElementById('swear-checkbox').checked;
+
+
+        if (!checkbox) {
+            mui.toast('请同意遵守《中国青年志愿者誓词》');
+        } else {
+            mui.ajax('{:cmf_url("portal/Page/user_swear")}',{
+                dataType:'json',//服务器返回json格式数据
+                type:'post',//HTTP请求类型
+                timeout:10000,//超时时间设置为10秒；
+                headers:{'Content-Type':'application/json'},                  
+                success:function(data){
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    mui.toast(data.msg);
+                },
+                error:function(xhr,type,errorThrown){
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        }
+    });
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

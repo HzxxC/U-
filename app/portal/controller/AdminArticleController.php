@@ -11,6 +11,7 @@
 namespace app\portal\controller;
 
 use cmf\controller\AdminBaseController;
+use cmf\lib\Upload;
 use app\portal\model\PortalPostModel;
 use app\portal\service\PostService;
 use app\portal\model\PortalCategoryModel;
@@ -347,6 +348,11 @@ class AdminArticleController extends AdminBaseController
                 $this->error($result);
             }
 
+            // 添加 爱的足迹活动
+            if ($data['post']['post_type'] == 5) {
+                $data['post']['active_start_time'] = strtotime($data['post']['active_date'].' '.$data['post']['active_start_time']);
+                $data['post']['active_end_time'] = strtotime($data['post']['active_date'].' '.$data['post']['active_end_time']);
+            }
 
             $portalPostModel = new PortalPostModel();
 
@@ -451,7 +457,7 @@ class AdminArticleController extends AdminBaseController
 
         $themeModel        = new ThemeModel();
         $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
-       
+
         $this->assign('article_theme_files', $articleThemeFiles);
         $this->assign('post', $post);
         $this->assign('postCategoryIds', $postCategoryIds);
@@ -533,6 +539,12 @@ class AdminArticleController extends AdminBaseController
             $result = $this->validate($post, 'AdminArticle');
             if ($result !== true) {
                 $this->error($result);
+            }
+
+             // 添加 爱的足迹活动
+            if ($data['post']['post_type'] == 5) {
+                $data['post']['active_start_time'] = strtotime($data['post']['active_date'].' '.$data['post']['active_start_time']);
+                $data['post']['active_end_time'] = strtotime($data['post']['active_date'].' '.$data['post']['active_end_time']);
             }
 
             $portalPostModel = new PortalPostModel();
@@ -763,6 +775,44 @@ class AdminArticleController extends AdminBaseController
 
     public function copy()
     {
+
+    }
+
+     public function homeAddPost()
+    {
+        if ($this->request->isPost()) {
+           
+            $data   = $this->request->param();
+
+            //状态只能设置默认值。未发布、未置顶、未推荐
+            $data['post']['post_status'] = 1;
+            $data['post']['is_top'] = 0;
+            $data['post']['recommended'] = 0;
+
+            $post   = $data['post'];
+
+            $result = $this->validate($post, 'AdminArticle');
+            
+            if ($result !== true) {
+                return ['is_err' => 1, 'msg' => $result];
+            }
+
+            $portalPostModel = new PortalPostModel();
+
+            if (!empty($upload_result)) {
+                $data['post']['more']['photos'] = [];
+                foreach ($upload_result as $key => $value) {
+                    $photoUrl = cmf_asset_relative_url($value['url']);
+                    array_push($data['post']['more']['photos'], ["url" => $photoUrl, "name" => $value['photo_names']]);
+                }
+            }
+
+            $portalPostModel->homeAddArticle($data['post'], $data['post']['categories']);
+
+            $data['post']['id'] = $portalPostModel->id;
+
+            return ['is_err' => 0, 'msg' => '发布成功!'];
+        }
 
     }
 

@@ -1,0 +1,41 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>商品兑换列表</a></li>
+    </ul>
+    <form method="post" class="js-ajax-form margin-top-20">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>商品名称</th>
+                <th>会员名称</th>
+                <th>会员姓名</th>
+                <th>会员手机号</th>
+                <th>消耗积分</th>
+                <th>兑换时间</th>
+            </tr>
+            </thead>
+            <tbody>
+                <foreach name="actions" id="vo">
+                    {$vo.more.template}
+                    <tr>
+                        <td>{$vo.id}</td>
+                        <td>{$vo.post_title}</td>
+                        <td>{$vo.user_nickname}</td>
+                        <td>{$vo.more.template}</td>
+                        <td>{$vo.more}</td>
+                        <td>{$vo.score}</td>
+                        <td>{$vo.create_time}</td>
+                    </tr>
+                </foreach>
+            </tbody>
+        </table>
+        <div class="pagination"></div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

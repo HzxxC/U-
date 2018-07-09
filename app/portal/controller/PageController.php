@@ -31,7 +31,28 @@ class PageController extends HomeBaseController
 
         $tplName = empty($more['template']) ? 'page' : $more['template'];
 
+        $this->assign('is_swear', session('user.is_swear'));
+
         return $this->fetch("/$tplName");
+    }
+
+
+    /**
+     * 会员同意宣誓
+     * @return [type] [description]
+     */
+    public function user_swear() {
+
+        if ($user = cmf_get_current_user()) {
+            
+            cmf_user_swear($user['id']);
+
+            return ['is_err' => 1, 'msg' => '宣誓成功'];
+
+         } else {
+
+            return ['is_err' => 0, 'msg' => '请登录'];
+         }
     }
 
 }

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <link rel="stylesheet" href="__STATIC__/mui/css/icons-extra.css">
+    <link rel="stylesheet" href="__STATIC__/mui/css/mui.picker.min.css">
+    <link rel="stylesheet" href="__STATIC__/mui/css/feedback-page.css">
+    <style>
+        
+    </style>
+    <hook name="before_head_end"/>
+</head>
+<body class="body-white mui-fullscreen" id="memory-list">
+    
+    <!--页面主结构开始-->
+        <div id="app" class="mui-views">
+            <div class="mui-view">
+                <div class="mui-navbar">
+                </div>
+                <div class="mui-pages">
+                </div>
+            </div>
+        </div>
+        <!--页面主结构结束-->
+        <!--单页面开始-->
+        <div id="memory" class="mui-page">
+            <!--页面标题栏开始-->
+            <div class="mui-navbar-inner mui-bar mui-bar-nav">
+                <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                    <span class="mui-icon mui-icon-left-nav"></span>
+                </button>
+                <h1 class="mui-center mui-title">{$category.name}</h1>
+                <a href="#feedback" class="mui-right mui-btn  mui-btn-link mui-btn-nav mui-pull-right">
+                    <span class="mui-icon mui-icon-extra mui-icon-extra-order" style="top: 4px;"></span>
+                </a>
+            </div>
+            <!--页面标题栏结束-->
+            <!--页面主内容区开始-->
+            <div class="mui-page-content">
+                <div class="mui-scroll-wrapper">
+                   <ul class="mui-table-view mui-table-view-chevron" id="list">
+                        <php>
+                            $user=cmf_get_current_user();
+                            $where=[
+                                'post.create_time'=>['egt',0],
+                                'post.post_type'=>1,
+                                'post.user_id'=>$user['id']
+                            ];
+                            $page=[
+                                'list_rows'=>10,
+                                'next'=>'下一页',
+                                'prev'=>'上一页'
+                            ];
+                        </php>
+                        <portal:articles item="vo" where="$where" order="post.create_time DESC" page="$page"
+                                         relation="categories"
+                                         categoryIds="$category.id"
+                                         returnVarName="articles_data">
+                             <li class="mui-table-view-cell mui-media">
+                                <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}">
+                                    <img class="mui-media-object mui-pull-left" src="">
+                                    <div class="mui-media-body">
+                                        {$vo.post_title}
+                                        <p class='mui-ellipsis'>时间：{:date('Y-m-d',$vo.published_time)}</p>
+                                    </div>
+                                </a>
+                            </li>            
+                        </portal:articles>
+                    </ul>
+                </div>
+            </div>
+            <!--页面主内容区结束-->
+        </div>
+        <!--单页面结束-->
+        <div id="feedback" class="mui-page feedback">
+            <div class="mui-navbar-inner mui-bar mui-bar-nav">
+                <button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+                    <span class="mui-icon mui-icon-left-nav"></span>爱的记忆
+                </button>
+                <h1 class="mui-center mui-title">发布</h1>
+            </div>
+            <div class="mui-page-content">
+                <form action="{:url('user/Index/homeAddPost')}" method="post" class="js-mobile-ajax-form">
+                    <div class="mui-input-row">
+                        <input id='post_title' name="post[post_title]" type="text" class="mui-input-clear contact" placeholder="请输入标题" />
+                        <input id='post_excerpt' name="post[post_excerpt]" type="hidden" value="" />
+                        <input id='categories' name="post[categories]" type="hidden" value="{$category.id}" />
+                    </div>
+                    <button id="showUserPicker" class="mui-btn" type="button">请选择分类<span class="caret"></span></button>
+                    <div class="row mui-input-row">
+                        <textarea id='post_content' name="post[post_content]" class="mui-input-clear question" placeholder="请输入内容"></textarea>
+                    </div>
+                    <ul id="photos" class="mui-table-view"></ul>
+                    <div id="photos-list">
+                        <a href="javascript:uploadMobileMultiImage('图片上传','#photos','photos-item-tpl');" id="openUploadImg">请选择图片上传</a>
+                    </div>
+                     <button id="sub" type="submit" class="mui-btn mui-btn-primary js-mobile-ajax-submit">点击发布</button>
+                </form>
+            </div>
+        </div>
+        <script type="text/html" id="photos-item-tpl">
+            <li id="saved-image{id}" class="mui-table-view-cell">
+                <input id="photo-{id}" type="hidden" name="photo_urls[]" value="{filepath}">
+                <input class="form-control" id="photo-{id}-name" type="hidden" name="photo_names[]" value="{name}" title="图片名称">
+                <img id="photo-{id}-preview" src="{url}" style="height:50px;width: 70px;"
+                     onclick="imagePreviewDialog(this.src);">
+                <a href="javascript:uploadOneImage('图片上传','#photo-{id}');" class="mui-btn mui-btn-primary" style="right: 80px;">替换</a>
+                <a href="javascript:(function(){$('#saved-image{id}').remove();})();" class="mui-btn mui-btn-danger">移除</a>
+            </li>
+        </script>
+
+
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__STATIC__/mui/js/mui.view.js"></script>
+<script src="__STATIC__/mui/js/mui.picker.js"></script>
+<script src="__STATIC__/mui/js/mui.poppicker.js"></script>
+<script type="text/javascript" charset="utf-8">
+    
+    mui.init();
+    //初始化单页view
+    var viewApi = mui('#app').view({
+        defaultPage: '#memory'
+    });
+    //初始化单页的区域滚动
+    mui('.mui-scroll-wrapper').scroll();
+
+    // 表单提交
+    var ajaxForm_list = $('form.js-mobile-ajax-form');
+    if (ajaxForm_list.length) {
+        Wind.use('ajaxForm', 'validate', function () {
+            var $btn;
+            $('button.js-mobile-ajax-submit').on('click', function (e) {
+                var btn = $(this), form = btn.parents('form.js-mobile-ajax-form');
+                $btn    = btn;
+                if (btn.data("loading")) {
+                    return;
+                }
+
+                var msg = btn.data('msg');
+                if (msg) {
+                    mui.toast(btn.data('msg'));
+                    return false;
+                }
+
+                //ie处理placeholder提交问题
+                if ($.browser && $.browser.msie) {
+                    form.find('[placeholder]').each(function () {
+                        var input = $(this);
+                        if (input.val() == input.attr('placeholder')) {
+                            input.val('');
+                        }
+                    });
+                }
+            });
+
+            ajaxForm_list.each(function () {
+                $(this).validate({
+                    //是否在获取焦点时验证
+                    //onfocusout : false,
+                    //是否在敲击键盘时验证
+                    //onkeyup : false,
+                    //当鼠标点击时验证
+                    //onclick : false,
+                    //给未通过验证的元素加效果,闪烁等
+                    highlight: function (element, errorClass, validClass) {
+                        if (element.type === "radio") {
+                            this.findByName(element.name).addClass(errorClass).removeClass(validClass);
+                        } else {
+                            var $element = $(element);
+                            $element.addClass(errorClass).removeClass(validClass);
+                            $element.parent().addClass("has-error");//bootstrap3表单
+                            $element.parents('.control-group').addClass("error");//bootstrap2表单
+
+                        }
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        if (element.type === "radio") {
+                            this.findByName(element.name).removeClass(errorClass).addClass(validClass);
+                        } else {
+                            var $element = $(element);
+                            $element.removeClass(errorClass).addClass(validClass);
+                            $element.parent().removeClass("has-error");//bootstrap3表单
+                            $element.parents('.control-group').removeClass("error");//bootstrap2表单
+                        }
+                    },
+                    showErrors: function (errorMap, errorArr) {
+                        var i, elements, error;
+                        for (i = 0; this.errorList[i]; i++) {
+                            error = this.errorList[i];
+                            if (this.settings.highlight) {
+                                this.settings.highlight.call(this, error.element, this.settings.errorClass, this.settings.validClass);
+                            }
+                            //this.showLabel( error.element, error.message );
+                        }
+                        if (this.errorList.length) {
+                            //this.toShow = this.toShow.add( this.containers );
+                        }
+                        if (this.settings.success) {
+                            for (i = 0; this.successList[i]; i++) {
+                                //this.showLabel( this.successList[ i ] );
+                            }
+                        }
+                        if (this.settings.unhighlight) {
+                            for (i = 0, elements = this.validElements(); elements[i]; i++) {
+                                this.settings.unhighlight.call(this, elements[i], this.settings.errorClass, this.settings.validClass);
+                            }
+                        }
+                        this.toHide = this.toHide.not(this.toShow);
+                        this.hideErrors();
+                        this.addWrapper(this.toShow).show();
+                    },
+                    submitHandler: function (form) {
+                        var $form = $(form);
+                        $form.ajaxSubmit({
+                            url: $btn.data('action') ? $btn.data('action') : $form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+                            dataType: 'json',
+                            beforeSubmit: function (arr, $form, options) {
+
+                                $btn.data("loading", true);
+                                var text = $btn.text();
+                                //按钮文案、状态修改
+                                $btn.text(text + '...').prop('disabled', true).addClass('disabled');
+                            },
+                            success: function (data, statusText, xhr, $form) {
+
+                                function _refresh() {
+                                    if (data.url) {
+                                        //返回带跳转地址
+                                        window.location.href = data.url;
+                                    } else {
+                                        if (data.code == 1) {
+                                            //刷新当前页
+                                            reloadPage(window);
+                                        }
+                                    }
+                                }
+
+                                var text = $btn.text();
+
+                                //按钮文案、状态修改
+                                $btn.removeClass('disabled').prop('disabled', false).text(text.replace('...', '')).parent().find('span').remove();
+                                if (data.code == 1) {
+                                    if ($btn.data('success')) {
+                                        var successCallback = $btn.data('success');
+                                        window[successCallback](data, statusText, xhr, $form);
+                                        return;
+                                    }
+                                    mui.toast(data.msg);
+                                    $(window).focus();
+                                } else if (data.code == 0) {
+
+                                    $btn.removeProp('disabled').removeClass('disabled');
+                                    mui.toast(data.msg);
+                                    setTimeout(function() {
+                                        _refresh();
+                                    }, 1000);
+                                    $(window).focus();
+                                }
+
+
+                            },
+                            error: function (xhr, e, statusText) {
+                                mui.toast(statusText);
+                            },
+                            complete: function () {
+                                $btn.data("loading", false);
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+    }
+</script>
+<script>
+    (function($, doc) {
+        $.init();
+        $.ready(function() {
+            /**
+             * 获取对象属性的值
+             * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+             * @param {Object} obj 对象
+             * @param {String} param 属性名
+             */
+            var _getParam = function(obj, param) {
+                return obj[param] || '';
+            };
+            //普通示例
+            var userPicker = new $.PopPicker();
+            userPicker.setData([{
+                value: '金晖助老',
+                text: '金晖助老'
+            }, {
+                value: '牵手关爱',
+                text: '牵手关爱'
+            }, {
+                value: '生态环保',
+                text: '生态环保'
+            }, {
+                value: '传统文化',
+                text: '传统文化'
+            }]);
+            var showUserPickerButton = doc.getElementById('showUserPicker');
+            showUserPickerButton.addEventListener('tap', function(event) {
+                userPicker.show(function(items) {
+                    showUserPickerButton.innerHTML = items[0].value + "<span class='caret'></span>";
+                   document.getElementById('post_excerpt').value = items[0].value; 
+                });
+            }, false);
+        });
+    })(mui, document);
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

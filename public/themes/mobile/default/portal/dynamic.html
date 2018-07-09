@@ -7,7 +7,7 @@
     <include file="public@head"/>
     <hook name="before_head_end"/>
 </head>
-<body class="body-white" id="relay-list">
+<body class="body-white" id="dynamic-list">
 
     <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
@@ -15,8 +15,7 @@
     </header>
     <div class="mui-content">
         <php>
-            $slide = $category['description'] . '_slide';
-            $top_slide_id = empty($theme_vars[$slide]) ? 1 : $theme_vars[$slide];
+            $top_slide_id = empty('top_slide') ? 1 : $theme_vars['top_slide'];
         </php>
         <div id="slider" class="mui-slider" >
             <div class="mui-slider-group">
@@ -32,7 +31,8 @@
         <ul class="mui-table-view mui-table-view-chevron" id="list">
             <php>
                 $where=[
-                'post.create_time'=>['egt',0]
+                    'post.create_time'=>['egt',0],
+                    'post.post_type'=>4
                 ];
                 $page=[
                     'list_rows'=>10,
@@ -45,14 +45,16 @@
                              categoryIds="$category.id"
                              returnVarName="articles_data">
                  <li class="mui-table-view-cell mui-media">
-                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id']))}">
+                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}">
                         <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
                         <div class="mui-media-body">
                             {$vo.post_title}
-                            <p class='mui-ellipsis'>兑换积分：{$vo.post_excerpt}</p>
+                            <p class='mui-ellipsis'>活动内容：{$vo.score}</p>
+                            <p class='mui-ellipsis'>活动地点：{$vo.score}</p>
+                            <p class='mui-ellipsis'>奖励积分：{$vo.score}</p>
                         </div>
                     </a>
-                    <a href="" class="mui-btn mui-btn-primary">兑换</a>
+                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}" class="mui-btn mui-btn-primary">我要报名</a>
                 </li>            
             </portal:articles>
         </ul>

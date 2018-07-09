@@ -827,6 +827,49 @@ function openUploadDialog(dialog_title, callback, extra_params, multi, filetype,
 }
 
 /**
+ * 打开手机端文件上传对话框
+ * @param dialog_title 对话框标题
+ * @param callback 回调方法，参数有（当前dialog对象，选择的文件数组，你设置的extra_params）
+ * @param extra_params 额外参数，object
+ * @param multi 是否可以多选
+ * @param filetype 文件类型，image,video,audio,file
+ * @param app  应用名，CMF的应用名
+ */
+function openUploadMobileDialog(dialog_title, callback, extra_params, multi, filetype, app) {
+    Wind.css('artDialog');
+    multi      = multi ? 1 : 0;
+    filetype   = filetype ? filetype : 'image';
+    app        = app ? app : GV.APP;
+    var params = '&multi=' + multi + '&filetype=' + filetype + '&app=' + app;
+    Wind.use("artDialog", "iframeTools", function () {
+        art.dialog.open(GV.ROOT + 'user/Index/webuploader?' + params, {
+            title: dialog_title,
+            id: new Date().getTime(),
+            width: '80%',
+            height: '250px',
+            lock: true,
+            fixed: true,
+            background: "#CCCCCC",
+            opacity: 0,
+            ok: function () {
+                if (typeof callback == 'function') {
+                    var iframewindow = this.iframe.contentWindow;
+                    var files        = iframewindow.get_selected_files();
+                    console.log(files);
+                    if (files && files.length > 0) {
+                        callback.apply(this, [this, files, extra_params]);
+                    } else {
+                        return false;
+                    }
+
+                }
+            },
+            cancel: true
+        });
+    });
+}
+
+/**
  * 单个文件上传
  * @param dialog_title 上传对话框标题
  * @param input_selector 图片容器
@@ -868,6 +911,32 @@ function uploadOneImage(dialog_title, input_selector, extra_params, app) {
  */
 function uploadMultiImage(dialog_title, container_selector, item_tpl_wrapper_id, extra_params, app) {
     openUploadDialog(dialog_title, function (dialog, files) {
+        var tpl  = $('#' + item_tpl_wrapper_id).html();
+        var html = '';
+        $.each(files, function (i, item) {
+            var itemtpl = tpl;
+            itemtpl     = itemtpl.replace(/\{id\}/g, item.id);
+            itemtpl     = itemtpl.replace(/\{url\}/g, item.url);
+            itemtpl     = itemtpl.replace(/\{preview_url\}/g, item.preview_url);
+            itemtpl     = itemtpl.replace(/\{filepath\}/g, item.filepath);
+            itemtpl     = itemtpl.replace(/\{name\}/g, item.name);
+            html += itemtpl;
+        });
+        $(container_selector).append(html);
+
+    }, extra_params, 1, 'image', app);
+}
+
+/**
+ * 手机端多图上传
+ * @param dialog_title 上传对话框标题
+ * @param container_selector 图片容器
+ * @param item_tpl_wrapper_id 单个图片html模板容器id
+ * @param extra_params 额外参数，object
+ * @param app  应用名,CMF 的应用名
+ */
+function uploadMobileMultiImage(dialog_title, container_selector, item_tpl_wrapper_id, extra_params, app) {
+    openUploadMobileDialog(dialog_title, function (dialog, files) {
         var tpl  = $('#' + item_tpl_wrapper_id).html();
         var html = '';
         $.each(files, function (i, item) {

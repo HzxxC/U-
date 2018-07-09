@@ -100,6 +100,21 @@ function cmf_get_current_user_id()
 }
 
 /**
+ * 设置当前登录前台用户id
+ * @return int
+ */
+function cmf_set_current_user_id()
+{
+    $sessionUserId = session('user.id');
+    if (empty($sessionUserId)) {
+        session('user.id', 2);
+        $sessionUserId = session('user.id');
+    }
+
+    return $sessionUserId;
+}
+
+/**
  * 返回带协议的域名
  */
 function cmf_get_domain()
@@ -1932,4 +1947,192 @@ function cmf_is_complete($uid) {
  */
 function cmf_get_category_name_by_id($id) {
     return Db::name('portal_category') -> where('id', $id) -> value('name');
+}
+
+/**
+ * 汉字字符串截取
+ * @param  [type]  $str     [description]
+ * @param  integer $start   [description]
+ * @param  [type]  $length  [description]
+ * @param  string  $charset [description]
+ * @param  boolean $suffix  [description]
+ * @return [type]           [description]
+ */
+function cmf_msubstr($str, $start=0, $length, $charset="utf-8", $suffix=false) {  
+    
+    if(function_exists("mb_substr")){  
+        
+        if($suffix)  
+            return mb_substr($str, $start, $length, $charset)."...";  
+        else
+            return mb_substr($str, $start, $length, $charset);  
+    
+    } elseif(function_exists('iconv_substr')) {  
+        
+        if($suffix)  
+            return iconv_substr($str,$start,$length,$charset)."...";  
+        else
+            return iconv_substr($str,$start,$length,$charset);  
+    }  
+
+    $re['utf-8']   = "/[x01-x7f]|[xc2-xdf][x80-xbf]|[xe0-xef]
+          [x80-xbf]{2}|[xf0-xff][x80-xbf]{3}/";  
+
+    $re['gb2312'] = "/[x01-x7f]|[xb0-xf7][xa0-xfe]/";  
+
+    $re['gbk']    = "/[x01-x7f]|[x81-xfe][x40-xfe]/";  
+
+    $re['big5']   = "/[x01-x7f]|[x81-xfe]([x40-x7e]|xa1-xfe])/";  
+
+    preg_match_all($re[$charset], $str, $match);  
+
+    $slice = join("",array_slice($match[0], $start, $length));  
+
+    if($suffix) return $slice."…";  
+
+    return $slice;
+
+}
+
+/**
+ * 根据type 获得标题
+ * @param  [type] $type [description]
+ * @return [type]       [description]
+ */
+function cmf_content_header($type) {
+
+    $header = '';
+
+    switch ($type) {
+        case '3':
+            $header = '商品详情';
+            break;
+        case '4':
+            $header = '活动详情';
+            break;
+        case '6':
+            $header = '一卡通详情';
+            break;
+        case '7':
+            $header = '商家详情';
+            break;
+
+        default:
+            $header = '文章详情';
+            break;
+    }
+
+    return $header;
+}
+
+function cmf_check_pm($type) {
+
+    $pm = '';
+
+    switch ($type) {
+        case '3':
+            $pm = '-1';
+            break;
+        case '4':
+            $pm = '0';
+            break;
+        case '5':
+            $pm = '1';
+            break;
+        case '6':
+            $pm = '-1';
+            break;
+    }
+
+    return $pm;
+}
+
+
+/**
+ * 会员宣誓
+ * @param  [type] $uid [description]
+ * @return [type]      [description]
+ */
+function cmf_user_swear($uid) {
+
+    $where = [
+        'id' => $uid,
+        'user_type' => 2,
+        'user_status' => 1
+    ];
+
+    return Db::name('user')->where($where)->setField('is_swear', 1);
+}
+
+/**
+ * 获得用户参与活动信息
+ * @param  [type] $uid [description]
+ * @param  [type] $pid [description]
+ * @return [type]      [description]
+ */
+function cmf_get_user_operate($uid, $pid, $active_end_time = '') {
+
+    $where = [
+        'user_id' => $uid,
+        'pid' => $pid
+    ];
+    
+    $uo = Db::name('user_operate') -> where($where) -> field('more') -> find();
+    
+    $return['has_join'] = 0;
+
+    $uo['more'] = json_decode($uo['more'],true);
+
+    if (!empty($uo)) {
+        $return['has_join'] = 1;
+        if (empty($uo['more']['join_end_time'])) {
+            $return['has_join_end'] = 0;
+            $return['service_time'] = time() > $active_end_time ? 2 : time() - $uo['more']['join_start_time'];
+        } else {
+            $return['has_join_end'] = 1;
+            $return['service_time'] = $uo['more']['join_end_time'] - $uo['more']['join_start_time'];
+        }
+    }
+
+    return $return;
+}
+
+function cmf_get_track_service_time($pid) {
+
+}
+
+function cmf_get_track($pid) {
+
+    $where = [
+        'post_type' => 5,
+        'post_status' => 1,
+        'id' => $pid
+    ];
+
+    $field = "id as pid, score, post_type as type";
+
+    return Db::name('portal_post') -> where($where) -> field($field) -> find();
+}
+
+function cmf_get_today_track($uid) {
+
+    $where = [
+        'post_type' => 5,
+        'post_status' => 1,
+        'active_start_time' => ['elt', time()],
+        'active_end_time' => ['egt', time()]
+    ];
+
+    $orderby = "active_start_time ASC";
+
+    $field = "id, post_title, active_start_time, active_end_time, more, score, post_type";
+
+    $track_info = Db::name('portal_post') -> where($where) -> field($field) -> order($orderby) -> find();
+
+    if (!empty($track_info)) {
+        // 会员已参与此次活动，获得服务时长
+        $track_info['uo'] = cmf_get_user_operate($uid, $track_info['id'], $track_info['active_end_time']);
+    }
+
+    return $track_info;
 }

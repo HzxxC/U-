@@ -1,7 +1,7 @@
 {
-    "name": "文章页",
+    "name": "合作商家详情页",
     "action": "portal/Article/index",
-    "description": "文章页模板文件",
+    "description": "合作商家详情页模板文件",
     "order": 10.0,
     "more": {
         "vars": {
