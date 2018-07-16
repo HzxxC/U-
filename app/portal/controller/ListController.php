@@ -32,4 +32,23 @@ class ListController extends HomeBaseController
         return $this->fetch('/' . $listTpl);
     }
 
+    public function ajax_get_list() {
+         
+         $id  = $this->request->param('id', 0, 'intval');
+         $post_type  = $this->request->param('post_type', 0, 'intval');
+         $page  = $this->request->param('page', 1, 'intval');
+
+         $limit = 5;
+
+         $data = cmf_get_list_by_cateId($id, $post_type, $page, $limit);
+
+         if (!empty($data['articles'])) {
+            return ['code'=>1, 'data'=>$data];
+         } else {
+            return ['code'=>0, 'msg'=>'没有更多数据了'];
+         }
+
+         
+     }
+
 }

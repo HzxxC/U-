@@ -3,18 +3,17 @@
 <body>
 <div class="wrap">
     <ul class="nav nav-tabs">
-        <li class="active"><a>商品兑换列表</a></li>
+        <li class="active"><a>活动报名列表</a></li>
     </ul>
     <form method="post" class="js-ajax-form margin-top-20">
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>商品名称</th>
+                <th>活动名称</th>
                 <th>会员名称</th>
-                <th>兑换者姓名</th>
-                <th>兑换者手机号</th>
-                <th>消耗积分</th>
+                <th>报名者姓名</th>
+                <th>报名者手机号</th>
                 <th>创建时间</th>
             </tr>
             </thead>
@@ -29,7 +28,6 @@
                         <td>{$vo.user_nickname}</td>
                         <td>{$more.username}</td>
                         <td>{$more.phone}</td>
-                        <td>{$vo.score}</td>
                         <td>{:date('Y-m-d H:i', $vo.create_time)}</td>
                     </tr>
                 </foreach>

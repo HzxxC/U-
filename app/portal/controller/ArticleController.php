@@ -102,9 +102,10 @@ class ArticleController extends HomeBaseController
 
          if ($user = cmf_get_current_user()) {
             
-            // TODO: 校验会员是否已经报名
-            
             // TODO: 校验会员积分是否充足
+            if (cmf_check_user_score($user['id'], $data['score'])) {
+                return ['is_err' => 0, 'msg' => '积分不足，请继续努力'];
+            }
 
             $userOperate->insertUserOperate($user['id'], $data);
 
@@ -132,26 +133,42 @@ class ArticleController extends HomeBaseController
             $today_track =  cmf_get_track($data['pid']);
 
             // 判断会员是否在区域范围内
-            if (1) {
+            if (cmf_check_user_location($data['pid'], $data['lat'], $data['lng'])) {
 
                 //点击开始
                 if ($data['type'] == 'start') { 
                     // 添加用户操作
                     $userOperate->insertUserOperate($uid, $today_track);
+
+                    return ['code'=>1, 'msg'=>'报名服务成功'];
                 }
 
                 //点击结束
                 if ($data['type'] == 'end') {
                    
                     $param['id'] = $data['id'];
-                    $param['more']['join_start_time'] = $data['join_strat_time'];
-                    // cmf_update_user_operater($param)
-                }
-            } else {
+                    $param['more']['join_start_time'] = $data['join_start_time'];
+                    $param['more']['join_end_time'] = time();
+                    $param['create_time'] = time();
+                    // 添加用户操作
+                    $userOperate->updateUserOperate($param);
 
+                    return ['code'=>1, 'msg'=>'已结束服务'];
+                }
+
+                
+            } else {
+                
+                //点击开始
+                if ($data['type'] == 'start') { 
+                    return ['code'=>0, 'msg'=>'您当前在活动区域外，无法开始'];
+                }
+                //点击结束
+                if ($data['type'] == 'end') {
+                    return ['code'=>0, 'msg'=>'您当前在活动区域外，无法结束'];
+                }
             }
 
-            return ['code'=>1, 'data'=>$today_track, 'msg'=>'success'];
         }
 
     }

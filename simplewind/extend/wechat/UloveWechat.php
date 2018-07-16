@@ -344,6 +344,7 @@ final class UloveWechat extends Wechat
                 'last_login_ip'   => get_client_ip(0, true),
                 'create_time'     => time(),
                 'last_login_time' => time(),
+                'avatar' 		  => $user_info['headimgurl'],
                 'user_status'     => 1,
                 'user_type'       => 2,//会员
                 'login_type'	  => 2,

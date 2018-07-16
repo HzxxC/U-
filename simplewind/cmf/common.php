@@ -77,6 +77,17 @@ function cmf_get_current_user()
 }
 
 /**
+ * 获取当前会员用户头像地址
+ * @param  [type] $uid [description]
+ * @return [type]      [description]
+ */
+function cmf_get_current_user_avatar($uid) {
+
+    return Db::name('user') -> where('id', $uid) -> value('avatar');
+
+}
+
+/**
  * 更新当前登录前台用户的信息
  * @param array $user 前台用户的信息
  */
@@ -252,6 +263,8 @@ function cmf_get_user_avatar_url($avatar)
     }
 
 }
+
+
 
 /**
  * CMF密码加密方法
@@ -2046,6 +2059,30 @@ function cmf_check_pm($type) {
 
     return $pm;
 }
+function cmf_check_action_name($type) {
+
+    $return = array();
+
+    switch ($type) {
+        case '3':
+            $return['action'] = '商品兑换';
+            break;
+        case '4':
+            $return['action'] = '活动报名';
+            break;
+        case '5':
+            $return['action'] = '足迹奖励';
+            break;
+        case '6':
+            $return['action'] = '一卡通兑换';
+            break;
+        case '8':
+            $return['action'] = '心愿实现';
+            break;
+    }
+
+    return $return;
+}
 
 
 /**
@@ -2077,16 +2114,21 @@ function cmf_get_user_operate($uid, $pid, $active_end_time = '') {
         'pid' => $pid
     ];
     
-    $uo = Db::name('user_operate') -> where($where) -> field('more') -> find();
+    $uo = Db::name('user_operate') -> where($where) -> field('id, more') -> find();
     
     $return['has_join'] = 0;
-
-    $uo['more'] = json_decode($uo['more'],true);
-
+    $return['has_join_end'] = 0;
+    $return['id'] = 0;
+    $return['join_start_time'] = 0;
+   
     if (!empty($uo)) {
+       
+        $uo['more'] = json_decode($uo['more'],true);
         $return['has_join'] = 1;
+        $return['id'] = $uo['id'];
+        $return['join_start_time'] = $uo['more']['join_start_time'];
+
         if (empty($uo['more']['join_end_time'])) {
-            $return['has_join_end'] = 0;
             $return['service_time'] = time() > $active_end_time ? 2 : time() - $uo['more']['join_start_time'];
         } else {
             $return['has_join_end'] = 1;
@@ -2097,10 +2139,110 @@ function cmf_get_user_operate($uid, $pid, $active_end_time = '') {
     return $return;
 }
 
+/**
+ * 根据会员ID获得服务时长
+ * @param  [type] $uid [description]
+ * @return [type]      [description]
+ */
+function cmf_get_service($uid) {
+
+    $where = [
+        'user_id' => $uid,
+        'type' => 5,
+        'create_time' => ['lt', strtotime(date("Y-m-d"),time())]
+    ];
+
+    $operate = Db::name('user_operate') -> where($where) -> select();
+
+    $time = 0;
+
+    foreach ($operate as $k => $v) {
+        $more = json_decode($v['more'],true);
+        $diff = empty($more['join_end_time']) ? 2 * 3600 : $more['join_end_time'] - $more['join_start_time'];
+        $time += $diff;
+    }
+
+    // 会员等级
+    $level = cmf_get_user_level($time);
+
+    return [
+        'time' => round($time / 3600),
+        'level' => $level['level'],
+        'next_level' => $level['next_level'],
+        'need_time' => $level['need_time']
+    ];
+}
+
+/**
+ * 获得用户等级
+ * @param  [type] $time [description]
+ * @return [type]       [description]
+ */
+function cmf_get_user_level($time) {
+
+    $time = round($time / 3600);
+    $level = array();
+
+    if ($time >= 0 && $time < 50) {
+        $level['level_num'] = 1;
+        $level['level'] = '志愿新人';
+        $level['next_level'] = '志愿达人';
+        $level['need_time'] = 50 - $time;
+    }       
+    elseif ($time >= 50 && $time < 100) {
+        $level['level_num'] = 2;
+        $level['level'] = '志愿达人';
+        $level['next_level'] = '志愿明星';
+        $level['need_time'] = 100 - $time;
+    }
+    elseif ($time >= 100 && $time < 300) {
+        $level['level_num'] = 3;
+        $level['level'] = '志愿明星';
+        $level['next_level'] = '志愿榜样';
+        $level['need_time'] = 300 - $time;
+    }
+    elseif ($time >= 300) {
+        $level['level_num'] = 4;
+        $level['level'] = '志愿榜样';
+        $level['next_level'] = '满级';
+    }
+
+    return $level;
+}
+
 function cmf_get_track_service_time($pid) {
 
 }
 
+function cmf_get_user_join_track($uid) {
+
+    $where = [
+        'uo.user_id' => $uid,
+        'uo.create_time' => ['lt', strtotime(date("Y-m-d"),time())]
+    ];
+
+    $track_info = Db::name('user_operate') -> alias('uo')
+                        -> join(config('prefix').'portal_post post', 'post.id = uo.pid', 'LEFT')
+                        -> field('uo.*, post.post_title, post.more as post_more')
+                        -> where($where) -> select() -> toArray();
+
+    foreach ($track_info as $key => $value) {
+        $track_info[$key]['more'] = json_decode($value['more'], true);
+        $track_info[$key]['post_more'] = json_decode($value['post_more'], true);
+        $diff = empty($track_info[$key]['more']['join_end_time']) ? 2 * 3600 : $track_info[$key]['more']['join_end_time'] - $track_info[$key]['more']['join_start_time'];
+
+        $track_info[$key]['service_time'] = round($diff / 3600);
+    }
+
+    return $track_info;
+
+}
+
+/**
+ * 根据文章ID获取 足迹活动内容
+ * @param  [type] $pid [description]
+ * @return [type]      [description]
+ */
 function cmf_get_track($pid) {
 
     $where = [
@@ -2114,6 +2256,11 @@ function cmf_get_track($pid) {
     return Db::name('portal_post') -> where($where) -> field($field) -> find();
 }
 
+/**
+ * 获得今日足迹活动详细内容
+ * @param  [type] $uid [description]
+ * @return [type]      [description]
+ */
 function cmf_get_today_track($uid) {
 
     $where = [
@@ -2135,4 +2282,140 @@ function cmf_get_today_track($uid) {
     }
 
     return $track_info;
+}
+
+/**
+ * 校验会员是否在活动地点内
+ * @param  [type] $pid [description]
+ * @param  [type] $lat [description]
+ * @param  [type] $lng [description]
+ * @return [type]      [description]
+ */
+function cmf_check_user_location($pid, $lat, $lng) {
+
+    // 精度
+    $accuracy = config('site_accuracy');
+
+    // 获得活动地点经纬度
+    $location = Db::name('portal_post') -> where('id', $pid) -> value('more');
+
+    $location = json_decode($location,true);
+
+    $distance = cmf_get_distance($location['lat'], $location['lng'], $lat, $lng);
+    
+    return $accuracy > abs($distance) ? true : false;
+
+}
+
+/**
+ * 计算两个坐标之间的距离(米)
+ * @param float $fP1Lat 起点(纬度)
+ * @param float $fP1Lon 起点(经度)
+ * @param float $fP2Lat 终点(纬度)
+ * @param float $fP2Lon 终点(经度)
+ * @return int
+ */
+function cmf_get_distance($fP1Lat, $fP1Lon, $fP2Lat, $fP2Lon){
+    
+    $fEARTH_RADIUS = 6378137;
+    //角度换算成弧度
+    $fRadLon1 = deg2rad($fP1Lon);
+    $fRadLon2 = deg2rad($fP2Lon);
+    $fRadLat1 = deg2rad($fP1Lat);
+    $fRadLat2 = deg2rad($fP2Lat);
+    //计算经纬度的差值
+    $fD1 = abs($fRadLat1 - $fRadLat2);
+    $fD2 = abs($fRadLon1 - $fRadLon2);
+    //距离计算
+    $fP = pow(sin($fD1/2), 2) +
+          cos($fRadLat1) * cos($fRadLat2) * pow(sin($fD2/2), 2);
+    
+    return intval($fEARTH_RADIUS * 2 * asin(sqrt($fP)) + 0.5);
+}
+
+function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
+
+    $where = [
+        'post.published_time' => [['> time', 0], ['<', time()]],
+        'post.post_status'    => 1,
+        'post.delete_time'    => 0,
+        'post.post_type'      => $post_type,
+        'category_post.category_id'    => $id
+    ];
+
+    $order       = "post.create_time DESC";
+
+
+    $page = empty($page) ? 1 : $page;
+    $limit = empty($limit) ? 5 : $limit;
+   
+    $join = [
+        //['__USER__ user', 'post.user_id = user.id'],
+    ];
+
+    $field ='post.id, post.post_title, post.post_type, post.more, post.score, post.post_excerpt, post.published_time';
+    array_push($join, ['__PORTAL_CATEGORY_POST__ category_post', 'post.id = category_post.post_id']);
+
+    $articles = Db::name('portal_post')->alias('post')->field($field)
+        ->join($join)
+        ->where($where)
+        ->order($order)
+        ->group('post.id');
+
+    $return = [];
+    
+    $articles = $articles->page($page, $limit) -> select() -> toArray();
+   
+    foreach ($articles as $key => $value) {
+        $articles[$key]['more'] = json_decode($value['more'], true);
+       
+        $articles[$key]['published_time'] = date('Y-m-d', $value['published_time']); 
+        $articles[$key]['url']     = cmf_url('portal/Article/index', array('id'=>$value['id'],'cid'=>$id,'type'=>$value['post_type']));
+        $articles[$key]['imgUrl']  = cmf_get_image_preview_url($articles[$key]['more']['thumbnail']);
+        $articles[$key]['address'] = empty($articles[$key]['more']['address']) ? "暂未活动地点" : $articles[$key]['more']['address'];
+    }
+
+    $return['articles']    = $articles;
+    $return['page']        = ($page + 1);
+    $return['size']        = count($articles);
+
+
+    return $return;
+
+}
+
+function cmf_check_user_score($uid, $score) {
+
+    $where = [
+        'id' => $uid,
+        'user_status' => 1,
+        'user_type' => 2
+    ];
+
+    $user_score = Db::name('user') -> where($where) -> value('score');
+
+    return (($user_score -  $score) >= 0) ? false : true;
+
+}
+
+function cmf_user_score($uid, $score, $type) {
+    $pm = cmf_check_pm($type);
+    $action = cmf_check_action_name($type);
+    if ($pm == 1) {
+        Db::name('user') -> where('id', $uid) -> setInc('score', $score);
+        Db::name('user_score_log')->insert([
+            "user_id"         => $uid,
+            "score"           => $score,  
+            "action"          => $action['action'],
+            "create_time"     => time()
+        ]);
+    } elseif ($pm == -1) {
+        Db::name('user') -> where('id', $uid) -> setDec('score', $score);
+        Db::name('user_score_log')->insert([
+            "user_id"         => $uid,
+            "score"           => $score,  
+            "action"          => $action['action'],
+            "create_time"     => time()
+        ]);
+    }
 }

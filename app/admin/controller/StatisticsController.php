@@ -33,7 +33,7 @@ class StatisticsController extends AdminBaseController
     public function goods() {
 
         $where = [
-            'type' => 4
+            'type' => 3
         ];
         $join = [
             [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
@@ -59,6 +59,25 @@ class StatisticsController extends AdminBaseController
      */
     public function card() {
 
+        $where = [
+            'type' => 6
+        ];
+        $join = [
+            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
+            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
+        ];
+        $actions = Db::name('user_operate')->alias('uo')
+                    ->join($join)
+                    ->where($where)
+                    ->field('uo.*, u.user_nickname, pp.post_title')
+                    ->order('create_time DESC')->paginate(20);
+        // 获取分页显示
+        $page = $actions->render();
+
+        $this->assign('actions', $actions);
+        $this->assign('page', $page);
+        // 渲染模板输出
+        return $this->fetch();
     }
 
     /**
@@ -67,6 +86,49 @@ class StatisticsController extends AdminBaseController
      */
     public function apply() {
 
+        $where = [
+            'type' => 4
+        ];
+        $join = [
+            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
+            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
+        ];
+        $actions = Db::name('user_operate')->alias('uo')
+                    ->join($join)
+                    ->where($where)
+                    ->field('uo.*, u.user_nickname, pp.post_title')
+                    ->order('create_time DESC')->paginate(20);
+        // 获取分页显示
+        $page = $actions->render();
+
+        $this->assign('actions', $actions);
+        $this->assign('page', $page);
+        // 渲染模板输出
+        return $this->fetch();
+    }
+
+    public function track() {
+
+        $where = [
+            'uo.type' => 5,
+            'uo.create_time' => ['lt', strtotime(date("Y-m-d"),time())]
+        ];
+        $join = [
+            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
+            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
+        ];
+        $actions = Db::name('user_operate')->alias('uo')
+                    ->join($join)
+                    ->where($where)
+                    ->field('uo.*, u.user_nickname, pp.post_title')
+                    ->order('create_time DESC')->paginate(20);
+        // 获取分页显示
+        $page = $actions->render();
+
+        $this->assign('actions', $actions);
+        $this->assign('page', $page);
+        // 渲染模板输出
+        return $this->fetch();
     }
 
     /**
@@ -75,5 +137,24 @@ class StatisticsController extends AdminBaseController
      */
     public function wish() {
 
+        $where = [
+            'type' => 8
+        ];
+        $join = [
+            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
+            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
+        ];
+        $actions = Db::name('user_operate')->alias('uo')
+                    ->join($join)
+                    ->where($where)
+                    ->field('uo.*, u.user_nickname, pp.post_title')
+                    ->order('create_time DESC')->paginate(20);
+        // 获取分页显示
+        $page = $actions->render();
+
+        $this->assign('actions', $actions);
+        $this->assign('page', $page);
+        // 渲染模板输出
+        return $this->fetch();
     }
 }

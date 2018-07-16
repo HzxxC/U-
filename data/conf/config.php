@@ -13,4 +13,5 @@
   'site_wechat_encodingaeskey' => '',
   'cmf_default_theme' => 'mobile',
   'cmf_default_theme_name' => 'default',
+  'site_accuracy' => '10',
 );
