@@ -2333,6 +2333,14 @@ function cmf_get_distance($fP1Lat, $fP1Lon, $fP2Lat, $fP2Lon){
     return intval($fEARTH_RADIUS * 2 * asin(sqrt($fP)) + 0.5);
 }
 
+/**
+ * 通过分类ID 获得文章列表
+ * @param  [type]  $id        [description]
+ * @param  [type]  $post_type [description]
+ * @param  [type]  $page      [description]
+ * @param  integer $limit     [description]
+ * @return [type]             [description]
+ */
 function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
 
     $where = [
@@ -2384,6 +2392,12 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
 
 }
 
+/**
+ * 校验 会员积分是否充足
+ * @param  [type] $uid   [description]
+ * @param  [type] $score [description]
+ * @return [type]        [description]
+ */
 function cmf_check_user_score($uid, $score) {
 
     $where = [
@@ -2398,6 +2412,13 @@ function cmf_check_user_score($uid, $score) {
 
 }
 
+/**
+ * 记录会员积分日志
+ * @param  [type] $uid   [description]
+ * @param  [type] $score [description]
+ * @param  [type] $type  [description]
+ * @return [type]        [description]
+ */
 function cmf_user_score($uid, $score, $type) {
     $pm = cmf_check_pm($type);
     $action = cmf_check_action_name($type);
@@ -2418,4 +2439,20 @@ function cmf_user_score($uid, $score, $type) {
             "create_time"     => time()
         ]);
     }
+}
+
+function cmf_check_active($uid, $pid, $type) {
+
+    if ($type == 3) {
+        return false;
+    }
+
+    $where = [
+        'user_id' => $uid,
+        'pid' => $pid,
+        'type' => $type
+    ];
+
+    return Db::name('user_operate') -> where($where) -> count();
+
 }
