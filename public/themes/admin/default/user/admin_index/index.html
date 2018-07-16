@@ -14,22 +14,21 @@
                placeholder="用户名/昵称/邮箱/手机">
         <input type="submit" class="btn btn-primary" value="搜索"/>
         <a class="btn btn-danger" href="{:url('user/adminIndex/index')}">清空</a>
+
+        <a class="btn btn-primary pull-right" href="{:url('user/adminIndex/index')}">导出</a>
     </form>
     <form method="post" class="js-ajax-form">
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>{:lang('USERNAME')}</th>
-                <th>{:lang('NICENAME')}</th>
                 <th>{:lang('AVATAR')}</th>
-                <th>{:lang('EMAIL')}</th>
+                <th>{:lang('NICENAME')}</th>
+                <th>等级</th>
+                <th>积分</th>
+                <th>姓名</th>
                 <th>手机</th>
                 <th>{:lang('REGISTRATION_TIME')}</th>
-                <th>{:lang('LAST_LOGIN_TIME')}</th>
-                <th>{:lang('LAST_LOGIN_IP')}</th>
-                <th>{:lang('STATUS')}</th>
-                <th>{:lang('ACTIONS')}</th>
             </tr>
             </thead>
             <tbody>
@@ -37,32 +36,18 @@
                 $user_statuses=array("0"=>lang('USER_STATUS_BLOCKED'),"1"=>lang('USER_STATUS_ACTIVATED'),"2"=>lang('USER_STATUS_UNVERIFIED'));
             </php>
             <foreach name="list" item="vo">
+                <php>
+                    $level = cmf_get_service($vo['id']);
+                </php>
                 <tr>
                     <td>{$vo.id}</td>
-                    <td>{$vo['user_login']?$vo['user_login']:($vo['mobile']?$vo['mobile']:lang('THIRD_PARTY_USER'))}
-                    </td>
-                    <td>{$vo['user_nickname']?$vo['user_nickname']:lang('NOT_FILLED')}</td>
                     <td><img width="25" height="25" src="{:url('user/public/avatar',array('id'=>$vo['id']))}"/></td>
-                    <td>{$vo.user_email}</td>
-                    <td>{$vo.mobile}</td>
+                    <td>{$vo['user_nickname']?$vo['user_nickname']:lang('NOT_FILLED')}</td>
+                    <td>{$level['level']}</td>
+                    <td>{$vo.score}</td>
+                    <td>{$vo.user_name | default="暂无"}</td>
+                    <td>{$vo.mobile | default="暂无"}</td>
                     <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
-                    <td>{:date('Y-m-d H:i:s',$vo['last_login_time'])}</td>
-                    <td>{$vo.last_login_ip}</td>
-                    <td>{$user_statuses[$vo['user_status']]}</td>
-                    <td>
-                        <neq name="vo.id" value="1">
-                            <empty name="vo.user_status">
-                                <a href="{:url('adminIndex/cancelban',array('id'=>$vo['id']))}"
-                                   class="js-ajax-dialog-btn"
-                                   data-msg="{:lang('ACTIVATE_USER_CONFIRM_MESSAGE')}">{:lang('ACTIVATE_USER')}</a>
-                                <else/>
-                                <a href="{:url('adminIndex/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn"
-                                   data-msg="{:lang('BLOCK_USER_CONFIRM_MESSAGE')}">{:lang('BLOCK_USER')}</a>
-                            </empty>
-                            <else/>
-                            <a style="color: #ccc;">{:lang('BLOCK_USER')}</a>
-                        </neq>
-                    </td>
                 </tr>
             </foreach>
             </tbody>
