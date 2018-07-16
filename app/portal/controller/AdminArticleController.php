@@ -105,7 +105,7 @@ class AdminArticleController extends AdminBaseController
         $categoryId = $this->request->param('category', 0, 'intval');
         $postType = $this->request->param('type', 1, 'intval');
 
-        // 类型为商品
+        // 类型
         $param['post_type'] = $postType;
         
         $postService = new PostService();
@@ -142,7 +142,7 @@ class AdminArticleController extends AdminBaseController
 
 
 
-        // 类型为
+        // 类型
         $param['post_type'] = $postType;
         
         $postService = new PostService();
@@ -179,7 +179,7 @@ class AdminArticleController extends AdminBaseController
         $categoryId = $this->request->param('category', 0, 'intval');
         $postType = $this->request->param('type', 1, 'intval');
 
-        // 类型为商品
+        // 类型
         $param['post_type'] = $postType;
         
         $postService = new PostService();
@@ -214,7 +214,7 @@ class AdminArticleController extends AdminBaseController
         $categoryId = $this->request->param('category', 0, 'intval');
         $postType = $this->request->param('type', 1, 'intval');
 
-        // 类型为商品
+        // 类型
         $param['post_type'] = $postType;
         
         $postService = new PostService();
@@ -247,6 +247,45 @@ class AdminArticleController extends AdminBaseController
         $param = $this->request->param();
 
         $categoryId = $this->request->param('category', 0, 'intval');
+        $postType = $this->request->param('type', 1, 'intval');
+
+        // 类型
+        $param['post_type'] = $postType;
+
+        $postService = new PostService();
+        $data        = $postService->adminArticleList($param);
+
+        $data->appends($param);
+
+        $portalCategoryModel = new PortalCategoryModel();
+        $categoryTree        = $portalCategoryModel->adminCategoryTree($categoryId);
+
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
+        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('articles', $data->items());
+        $this->assign('category_tree', $categoryTree);
+        $this->assign('category', $categoryId);
+        $this->assign('postType', $postType);
+        $this->assign('page', $data->render());
+
+
+        return $this->fetch();
+    }
+
+    /**
+     * 爱的记忆 会员上传 文章列表
+     * @return [type] [description]
+     */
+    public function user_memory()
+    {
+        $param = $this->request->param();
+
+        $categoryId = $this->request->param('category', 0, 'intval');
+        $postType = $this->request->param('type', 1, 'intval');
+
+        // 类型
+        $param['post_type'] = $postType;
 
         $postService = new PostService();
         $data        = $postService->adminArticleList($param);
@@ -341,6 +380,22 @@ class AdminArticleController extends AdminBaseController
      * 添加 U爱动态
      */
     public function add_dynamic()
+    {
+        $categoryId = $this->request->param('category', 0, 'intval');
+        $postType = $this->request->param('type', 1, 'intval');
+        $this->assign('category', $categoryId);
+        $this->assign('postType', $postType);
+       
+        $themeModel        = new ThemeModel();
+        $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
+        $this->assign('article_theme_files', $articleThemeFiles);
+        return $this->fetch();
+    }
+
+    /**
+     * 添加 爱的记忆
+     */
+    public function add_memory()
     {
         $categoryId = $this->request->param('category', 0, 'intval');
         $postType = $this->request->param('type', 1, 'intval');
@@ -521,6 +576,29 @@ class AdminArticleController extends AdminBaseController
      * @return [type] [description]
      */
     public function edit_card()
+    {
+        $id = $this->request->param('id', 0, 'intval');
+
+        $portalPostModel = new PortalPostModel();
+        $post            = $portalPostModel->where('id', $id)->find();
+        $postCategories  = $post->categories()->alias('a')->column('a.name', 'a.id');
+        $postCategoryIds = implode(',', array_keys($postCategories));
+
+        $themeModel        = new ThemeModel();
+        $articleThemeFiles = $themeModel->getActionThemeFiles('portal/Article/index');
+       
+        $this->assign('article_theme_files', $articleThemeFiles);
+        $this->assign('post', $post);
+        $this->assign('postCategoryIds', $postCategoryIds);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 编辑 爱的记忆
+     * @return [type] [description]
+     */
+    public function edit_memory()
     {
         $id = $this->request->param('id', 0, 'intval');
 

@@ -3,15 +3,9 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="javascript:;">所有爱的记忆</a></li>
-        <li><a href="{:url('AdminArticle/add_memory', array('category' => $category, 'type' => $postType))}">添加爱的记忆</a></li>
+        <li class="active"><a href="javascript:;">爱的记忆-会员上传列表</a></li>
     </ul>
     <form class="well form-inline margin-top-20" method="post" action="{:url('AdminArticle/index')}">
-        分类:
-        <select class="form-control" name="category" style="width: 140px;">
-            <option value='0'>全部</option>
-            {$category_tree|default=''}
-        </select> &nbsp;&nbsp;
         时间:
         <input type="text" class="form-control js-bootstrap-datetime" name="start_time"
                value="{$start_time|default=''}"
@@ -27,23 +21,6 @@
     </form>
     <form class="js-ajax-form" action="" method="post">
         <div class="table-actions">
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
-                </button>
-            </notempty>
-            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布
-            </button>
-            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布
-            </button>
-            <!--
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>
-            </notempty>
-            <button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>
-            -->
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
@@ -57,15 +34,9 @@
                         <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
                     </label>
                 </th>
-                <notempty name="category">
-                    <th width="50">{:lang('SORT')}</th>
-                </notempty>
                 <th width="50">ID</th>
                 <th>标题</th>
                 <th width="160">作者</th>
-                <th width="65">点击量</th>
-                <th width="160">缩略图</th>
-                <th width="130">更新时间</th>
                 <th width="130">发布时间</th>
                 <th width="70">状态</th>
                 <th width="90">操作</th>
@@ -77,12 +48,6 @@
                         <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
                                value="{$vo.id}" title="ID:{$vo.id}">
                     </td>
-                    <notempty name="category">
-                        <td>
-                            <input name="list_orders[{$vo.post_category_id}]" class="input-order" type="text"
-                                   value="{$vo.list_order}">
-                        </td>
-                    </notempty>
                     <td><b>{$vo.id}</b></td>
                     <td>
                         <notempty name="category">
@@ -94,20 +59,6 @@
                         </notempty>
                     </td>
                     <td>{$vo.user_nickname}</td>
-                    <td>{$vo.post_hits|default=0}</td>
-                    <td>
-                        <notempty name="vo.more.thumbnail">
-                            <a href="javascript:parent.imagePreviewDialog('{:cmf_get_image_preview_url($vo.more.thumbnail)}');">
-                                <i class="fa fa-photo fa-fw"></i>
-                            </a>
-                        </notempty>
-                    </td>
-                    <td>
-                        <notempty name="vo.update_time">
-                            {:date('Y-m-d H:i',$vo['update_time'])}
-                        </notempty>
-
-                    </td>
                     <td>
                         <empty name="vo.published_time">
                             未发布
@@ -123,7 +74,7 @@
                         </notempty>
                     </td>
                     <td>
-                        <a href="{:url('AdminArticle/edit_memory',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                        <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}">查看</a>
                         <a href="{:url('AdminArticle/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>
                     </td>
                 </tr>
@@ -132,15 +83,9 @@
             <tr>
                 <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x"
                                              data-checklist="js-check-x"></label></th>
-                <notempty name="category">
-                    <th width="50">{:lang('SORT')}</th>
-                </notempty>
                 <th width="50">ID</th>
                 <th>标题</th>
                 <th width="160">作者</th>
-                <th width="65">点击量</th>
-                <th width="160">缩略图</th>
-                <th width="130">更新时间</th>
                 <th width="130">发布时间</th>
                 <th width="70">状态</th>
                 <th width="90">操作</th>
@@ -148,23 +93,6 @@
             </tfoot>
         </table>
         <div class="table-actions">
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
-                </button>
-            </notempty>
-            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布
-            </button>
-            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
-                    data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布
-            </button>
-            <!--
-            <notempty name="category">
-                <button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>
-            </notempty>
-            <button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>
-            -->
             <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
                     data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
                 {:lang('DELETE')}
