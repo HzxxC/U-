@@ -56,6 +56,7 @@ class AdminIndexController extends AdminBaseController
      */
     public function index()
     {
+
         $where   = [];
         $request = input('request.');
 
@@ -68,6 +69,10 @@ class AdminIndexController extends AdminBaseController
 
             $keywordComplex['user_login|user_nickname|user_email|mobile']    = ['like', "%$keyword%"];
         }
+
+        // 只获取会员
+        $where['user_type'] = 2;
+
         $usersQuery = Db::name('user');
 
         $list = $usersQuery->whereOr($keywordComplex)->where($where)->order("create_time DESC")->paginate(10);
@@ -75,6 +80,7 @@ class AdminIndexController extends AdminBaseController
         $page = $list->render();
         $this->assign('list', $list);
         $this->assign('page', $page);
+
         // 渲染模板输出
         return $this->fetch();
     }
