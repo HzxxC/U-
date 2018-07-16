@@ -291,7 +291,7 @@ class UeditorController extends HomeBaseController
     private function ueditorConfig()
     {
 
-        $config_text    = preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("./static/js/ueditor/config.json"));
+        $config_text    = preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("./public/static/js/ueditor/config.json"));
         $config         = json_decode($config_text, true);
         $upload_setting = cmf_get_upload_setting();
 

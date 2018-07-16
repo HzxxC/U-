@@ -17,7 +17,7 @@
     </style>
     <hook name="before_head_end"/>
 </head>
-<body class="body-white">
+<body class="body-white" id="article">
     <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">{$category.name}</h1>
@@ -25,9 +25,21 @@
             </a>
     </header>
   <div class="mui-content">
-
+    <div class="mui-card-content">
+        <div class="header mui-clearfix">
+            <h4>{$article.post_title}</h4>
+            <p>时间：{:date('Y年m月d日',$article.published_time)}</p>
+        </div>
+        <div class="mui-card-content-inner">
+            {$article.post_content}
+        </div>
+        <notempty name="article.more.photos">
+            <volist name="article.more.photos" id="vo">
+                <p><img src="{:cmf_get_image_url($vo.url)}"></p>
+            </volist>
+        </notempty>
     </div>
-
+  </div>
 <div>
     <include file="public@footer"/>
 </div>

@@ -7,7 +7,7 @@
     <include file="public@head"/>
     <hook name="before_head_end"/>
 </head>
-<body class="body-white" id="relay-list">
+<body class="" id="track-list">
 
     <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
@@ -18,33 +18,46 @@
             // 获得今日足迹活动
             $uid = cmf_get_current_user_id();
             $today_track = cmf_get_today_track($uid);
-            // 判断用户是否已参加，获得服务时长
         </php>
-        <a id="start">点击开始</a>
+        <notempty name="today_track">
+            <php>
+                $today_track['more'] = json_decode($today_track['more'], true);
+            </php>
+            <div class="track-content">
+                <div class="today-track">
+                    <div class="track-img">
+                        <img src="{:cmf_get_image_preview_url($today_track.more.thumbnail)}" alt="">
+                    </div>
+                    <h3>{$today_track.post_title}</h3>
+                    <p><span class="mui-icon mui-icon-location"></span>{$today_track.more.address}</p>
+                    <div class="user-operate">
+                        <if condition="$today_track['uo']['has_join'] eq 0">
+                            <button type="button" id="start" class="mui-btn mui-btn-primary">点击开始</button>
+                        <else/>
+                            <button type="button" class="mui-btn mui-btn-primary" id="no-click-start">点击开始</button>
+                        </if>
+                        <if condition="$today_track['uo']['has_join_end'] eq 0" />
+                            <button type="button" id="end" class="mui-btn mui-btn-danger">点击结束</button>
+                        <else/>
+                            <button type="button" class="mui-btn mui-btn-danger" id="no-click-end">点击结束</button>    
+                        </if>
+                    </div>
+                </div>
+            </div>
+        </notempty>
         <ul class="mui-table-view mui-table-view-chevron" id="list">
             <php>
-                $where=[
-                    'post.create_time'=>['egt',0],
-                    'post.post_type'=>5,
-                    'active_start_time' => ['gt', time()],
-                ];
-                $page=[
-                    'list_rows'=>10,
-                    'next'=>'下一页',
-                    'prev'=>'上一页'
-                ];
+                $join_track = cmf_get_user_join_track($uid);
             </php>
-            <portal:articles item="vo" where="$where" order="post.create_time DESC" page="$page"
-                             relation="categories"
-                             categoryIds="$category.id"
-                             returnVarName="articles_data">
+            <volist name="join_track" id="vo">
                  <li class="mui-table-view-cell mui-media">
-                        <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
+                        <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.post_more.thumbnail)}">
                         <div class="mui-media-body">
-                            {$vo.post_title}
+                            <p>{$vo.post_title}</p>
+                            <p>服务时长：{$vo.service_time}小时</p>
                         </div>
-                </li>            
-            </portal:articles>
+                 </li> 
+            </volist>
         </ul>
     </div>
 
@@ -96,43 +109,104 @@ wx.ready(function(){
         }
     });
 
-    document.getElementById('start').addEventListener('tap', function() {
-        wx.getLocation({
-            success: function (res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                mui.ajax('{:cmf_url("portal/Article/track_location")}',{
-                    data:{
-                        pid: '{$today_track.id}',
-                        lat: latitude,
-                        lng: longitude,
-                        type: 'start',
-                    },
-                    dataType:'json',//服务器返回json格式数据
-                    type:'post',//HTTP请求类型
-                    timeout:10000,//超时时间设置为10秒；
-                    headers:{'Content-Type':'application/json'},                  
-                    success:function(data){
-                        //服务器返回响应，根据响应结果，分析是否登录成功；
-                        console.log(data);
-                    },
-                    error:function(xhr,type,errorThrown){
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            },
-            cancel: function (res) {
-                alert('用户拒绝授权获取地理位置');
-            }
+    var start = document.getElementById('start');
+    var no_click_start = document.getElementById('no-click-start');
+
+    if (no_click_start) {
+        no_click_start.addEventListener('tap', function() {
+           mui.toast('你已参与此次活动，不能再参与了');
         });
-    });
+    }
+
+    var has_join = "{$today_track['uo']['has_join']}";
+    if (start) {
+        start.addEventListener('tap', function() {
+            wx.getLocation({
+                success: function (res) {
+                    var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                    mui.ajax('{:cmf_url("portal/Article/track_location")}',{
+                        data:{
+                            pid: '{$today_track.id}',
+                            lat: latitude,
+                            lng: longitude,
+                            type: 'start',
+                        },
+                        dataType:'json',//服务器返回json格式数据
+                        type:'post',//HTTP请求类型
+                        timeout:10000,//超时时间设置为10秒；
+                        headers:{'Content-Type':'application/json'},                  
+                        success:function(data){
+                            //服务器返回响应，根据响应结果，分析是否登录成功；
+                            mui.toast(data.msg);
+                        },
+                        error:function(xhr,type,errorThrown){
+                            //异常处理；
+                            console.log(type);
+                        }
+                    });
+                },
+                cancel: function (res) {
+                    alert('用户拒绝授权获取地理位置');
+                }
+            });
+        });
+    }
+    
+
+    var end = document.getElementById('end');
+    var no_click_end = document.getElementById('no-click-end');
+
+    if (no_click_end) {
+        no_click_end.addEventListener('tap', function() {
+           mui.toast('你已结束参与此次活动，不能再结束了');
+        });
+    }
+
+    if (end) {
+        end.addEventListener('tap', function() {
+            wx.getLocation({
+                success: function (res) {
+                    var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                    var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+
+                    if (has_join == 1) {
+                        mui.ajax('{:cmf_url("portal/Article/track_location")}',{
+                            data:{
+                                pid: '{$today_track.id}',
+                                id: '{$today_track.uo.id}',
+                                lat: latitude,
+                                lng: longitude,
+                                join_start_time: {$today_track.uo.join_start_time},
+                                type: 'end',
+                            },
+                            dataType:'json',//服务器返回json格式数据
+                            type:'post',//HTTP请求类型
+                            timeout:10000,//超时时间设置为10秒；
+                            headers:{'Content-Type':'application/json'},                  
+                            success:function(data){
+                                //服务器返回响应，根据响应结果，分析是否登录成功；
+                                mui.toast(data.msg);
+                            },
+                            error:function(xhr,type,errorThrown){
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    } else {
+                         mui.toast("您还为参与此次足迹，请点击开始");
+                    }
+
+                },
+                cancel: function (res) {
+                    alert('用户拒绝授权获取地理位置');
+                }
+            });
+        });
+    }
 
 });         
        
-function callLocation() {
-
-}
 </script> 
 </if>
 <!-- /container -->

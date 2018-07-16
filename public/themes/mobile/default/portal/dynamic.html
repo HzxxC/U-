@@ -13,51 +13,26 @@
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
             <h1 class="mui-title">{$category.name}</h1>
     </header>
-    <div class="mui-content">
+    <div class="mui-content  mui-scroll-wrapper" id="pullrefresh">
         <php>
-            $top_slide_id = empty('top_slide') ? 1 : $theme_vars['top_slide'];
+            $top_slide_id = empty($theme_vars['top_slide']) ? 1 : $theme_vars['top_slide'];
         </php>
-        <div id="slider" class="mui-slider" >
-            <div class="mui-slider-group">
-                <slides id="$top_slide_id">
-                    <div class="mui-slider-item mui-slider-item-duplicate">
-                        <a href="{$vo.url|default=''}">
-                            <img src="{:cmf_get_image_url($vo.image)}">
-                        </a>
-                    </div>
-                </slides>
-            </div>
-        </div>
-        <ul class="mui-table-view mui-table-view-chevron" id="list">
-            <php>
-                $where=[
-                    'post.create_time'=>['egt',0],
-                    'post.post_type'=>4
-                ];
-                $page=[
-                    'list_rows'=>10,
-                    'next'=>'下一页',
-                    'prev'=>'上一页'
-                ];
-            </php>
-            <portal:articles item="vo" where="$where" order="post.create_time DESC" page="$page"
-                             relation="categories"
-                             categoryIds="$category.id"
-                             returnVarName="articles_data">
-                 <li class="mui-table-view-cell mui-media">
-                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}">
-                        <img class="mui-media-object mui-pull-left" src="{:cmf_get_image_preview_url($vo.more.thumbnail)}">
-                        <div class="mui-media-body">
-                            {$vo.post_title}
-                            <p class='mui-ellipsis'>活动内容：{$vo.score}</p>
-                            <p class='mui-ellipsis'>活动地点：{$vo.score}</p>
-                            <p class='mui-ellipsis'>奖励积分：{$vo.score}</p>
+        <div class="mui-scroll">
+            <div id="slider" class="mui-slider" >
+                <div class="mui-slider-group">
+                    <slides id="$top_slide_id">
+                        <div class="mui-slider-item mui-slider-item-duplicate">
+                            <a href="{$vo.url|default=''}">
+                                <img src="{:cmf_get_image_url($vo.image)}">
+                            </a>
                         </div>
-                    </a>
-                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$category['id'],'type'=>$vo['post_type']))}" class="mui-btn mui-btn-primary">我要报名</a>
-                </li>            
-            </portal:articles>
-        </ul>
+                    </slides>
+                </div>
+            </div>
+            <input type="hidden" id="page" value="1">
+            <ul class="mui-table-view mui-table-view-chevron" id="list">
+            </ul>
+        </div>
     </div>
 
 <div class="container">
@@ -68,6 +43,71 @@
     mui.init({
         swipeBack:true //启用右滑关闭功能
     });
+    mui.init({
+        pullRefresh: {
+            container: '#pullrefresh',
+            up: {
+                auto:true,
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+    });
+
+    window.page = document.getElementById('page').value;
+    function pullupRefresh() {
+         mui.ajax('{:cmf_url("portal/list/ajax_get_list")}',{
+            data:{
+                id: "{$category.id}",
+                post_type: 4,
+                page: window.page
+            },
+            dataType:'json',//服务器返回json格式数据
+            type:'post',//HTTP请求类型
+            timeout:5000,//超时时间设置为5秒；
+            headers:{'Content-Type':'application/json'},                  
+            success:function(data){
+                if (data.code == 1) {
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(false); //参数为true代表没有更多数据了。
+                    addData(data.data.articles);
+                    window.page = data.data.page;
+                    mui.toast("加载了" + data.data.size + "条记录");
+                } else {
+                    mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+                    mui.toast(data.msg);
+                }
+               
+            },
+            error:function(xhr,type,errorThrown){
+                //异常处理；
+                console.log(type);
+            }
+        });
+    }
+
+    function addData(data) {
+        var table = document.body.querySelector('.mui-table-view');
+        for(var i = 0, len = data.length; i < len; i++) {
+            var li = document.createElement('li');
+            li.className = 'mui-table-view-cell  mui-media';
+            li.innerHTML = '<a href="' + data[i].url + '" class="a-link">' +
+                                '<img class="mui-media-object mui-pull-left" src="' + data[i].imgUrl + '">' +
+                                '<div class="mui-media-body">' +
+                                    data[i].post_title +
+                                    '<p class="mui-ellipsis">活动地点：' + data[i].address + '</p>' +
+                                    '<p class="mui-ellipsis">奖励积分：' + data[i].score + '</p>' +
+                                '</div>' +
+                            '</a>' +
+                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">我要报名</a>';
+            //下拉刷新，新纪录插到最前面；
+            table.appendChild(li);
+        }
+        mui('.mui-table-view-cell').on('tap', 'a',function(e) {
+            window.location.href = this.href;
+        });
+    }
+
+    
 </script>
 <hook name="before_body_end"/>
 </body>

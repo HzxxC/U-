@@ -6,6 +6,7 @@
         <li class="active"><a href="#A" data-toggle="tab">{:lang('WEB_SITE_INFOS')}</a></li>
         <li><a href="#B" data-toggle="tab">{:lang('WECHAT_SETTING')}</a></li>
         <li><a href="#C" data-toggle="tab">{:lang('SEO_SETTING')}</a></li>
+        <li><a href="#D" data-toggle="tab">足迹精度</a></li>
         <!--<li><a href="#C" data-toggle="tab">{:lang('URL_SETTING')}</a></li>-->
         <!--<li><a href="#E" data-toggle="tab">{:lang('COMMENT_SETTING')}</a></li>-->
         <!-- <li><a href="#F" data-toggle="tab">用户注册设置</a></li> -->
@@ -189,6 +190,23 @@
                             <div class="col-md-6 col-sm-10">
                                 <textarea class="form-control" id="input-site_seo_description"
                                           name="options[site_seo_description]">{$site_info.site_seo_description|default=''}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">
+                                    {:lang('SAVE')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="D">
+                        <div class="form-group">
+                            <label for="input-site_accuracy" class="col-sm-2 control-label">足迹精度</label>
+                            <div class="col-md-6 col-sm-10">
+                                <input type="text" class="form-control" id="input-site_accuracy"
+                                       name="options[site_accuracy]" value="{$site_info.site_accuracy|default=''}">
+                                        <p class="help-block">单位为米</p>
                             </div>
                         </div>
                         <div class="form-group">

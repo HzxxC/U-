@@ -59,7 +59,7 @@
          mui.ajax('{:cmf_url("portal/list/ajax_get_list")}',{
             data:{
                 id: "{$category.id}",
-                post_type: 3,
+                post_type: 8,
                 page: window.page
             },
             dataType:'json',//服务器返回json格式数据
@@ -94,10 +94,10 @@
                                 '<img class="mui-media-object mui-pull-left" src="' + data[i].imgUrl + '">' +
                                 '<div class="mui-media-body">' +
                                     data[i].post_title +
-                                    '<p class="mui-ellipsis">兑换积分：' + data[i].score + '</p>' +
+                                    '<p class="mui-ellipsis">心愿' + data[i].post_excerpt + '</p>' +
                                 '</div>' +
                             '</a>' +
-                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">兑换</a>';
+                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">实现</a>';
             //下拉刷新，新纪录插到最前面；
             table.appendChild(li);
         }

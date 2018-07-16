@@ -76,6 +76,91 @@ body#relay {
 	color: #3c3939;
 }
 
+/* track-list */
+#track-list .mui-bar-nav {
+	box-shadow: none;
+}
+#track-list .track-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #fff;
+	padding-bottom: 25px;
+}
+#track-list .today-track {
+	width: 100%
+}
+#track-list .today-track .track-img {
+	background: url('../images/ulove-track-bg.png');
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+}
+#track-list .today-track .track-img img {
+	display: block;
+	width: 120px;
+	height: 120px;
+	border-radius: 100%;
+	margin: 0 auto;
+	padding-top: 15px;
+}
+
+#track-list .today-track {
+	text-align: center;
+}
+
+#track-list .today-track h3 {
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+
+#track-list .today-track .mui-icon {
+	font-size: 18px;
+	color: #fe9900;
+}
+
+#track-list .user-operate {
+	margin-top: 25px;
+}
+
+#track-list .user-operate .mui-btn:first-child {
+	margin-right: 65px;
+}
+
+#track-list .mui-table-view {
+	padding-left: 15px;
+	padding-right: 15px;
+	background-color: transparent;
+}
+
+#track-list .mui-table-view:before, #track-list .mui-table-view:after, #track-list .mui-table-view-cell:after {
+	background-color: transparent;
+}
+
+#track-list .mui-table-view-cell {
+	background: url('../images/ulove-track-info-bg.png') no-repeat;
+	background-size: 100% auto;
+	height: 62px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+#track-list .mui-table-view .mui-media-object {
+	width: 98px;
+	max-width: 98px;
+	height: 52px;
+	margin: 0;
+}
+
+#track-list .mui-table-view .mui-media-body {
+}
+
+#track-list .mui-table-view .mui-media-body p {
+	padding-left: 25px;
+	padding-top: 2px;
+	color: #333;
+}
+
+
 
 /* Relay_list */
 
@@ -85,10 +170,15 @@ body#relay {
 
 
 #relay-list #list {
-	padding-top: 15px;
+	margin-top: 0px;
 }
 
 /* dynamic-list */
+#dynamic-list .mui-table-view {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
 #dynamic-list .mui-table-view-chevron .mui-table-view-cell {
 	padding-right: 115px;
 }
@@ -99,6 +189,12 @@ body#relay {
 
 #dynamic-list .mui-table-view-cell p {
 	font-size: 12px;
+}
+
+#dynamic-list .mui-table-view .mui-media-object {
+	max-width: 60px;
+	height: 60px;
+	width: 60px;
 }
 
 /* Card-list */
@@ -426,6 +522,8 @@ body#relay {
     background: #fff;
     margin-top: 15px;
     list-style: none;
+    max-height: 77px;
+    overflow-y: auto;
 }
 
 #photos .mui-table-view-cell > .mui-btn.nui-btn.nui-btn-primary {
@@ -451,6 +549,24 @@ body#relay {
 	position: absolute;
 	top: 3px;
 	left: 7px;
+}
+
+/* article */
+#article .mui-card-content {
+	padding: 0 15px;
+}
+
+#article .header h4 {
+	margin-top: 35px;
+}
+
+#article .mui-card-content-inner {
+	padding: 15px 0;
+}
+
+#article .mui-card-content p > img {
+	display: block;
+	width: 100%;
 }
 
 /* Detail */
@@ -620,6 +736,87 @@ body#relay {
 	border-color: #ff5d5d;
 	left: 35%;
 	margin-top: 15px;
+}
+
+/* good-web */
+#good-web .mui-bar-nav {
+	box-shadow: none;
+}
+#good-web .user-info {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	background: url('../images/ulove-user-info-bg.png') no-repeat;
+	background-size: 100% 100%; 
+	height: 215px;
+}
+#good-web .user-info .user-avatar {
+	display: block;
+    margin: 0 auto;
+    width: 80px;
+    border-radius: 100%;
+}
+#good-web .user-info h3 {
+	margin-top: 10px;
+	color: #fff;
+	text-align: center;
+}
+#good-web .user-info p {
+	margin-top: 10px;
+}
+#good-web .user-info p > span {
+	font-size: 12px;
+	color: #fff;
+	display: inline-block;
+	padding: 2px 8px;
+	background-color: #fe9901;
+	border-radius: 4px;
+}
+
+#good-web .user-info p > span:first-child {
+	margin-right: 5px;
+}
+
+#good-web .mui-card-content {
+	padding-top: 25px;
+	background-color: #ffffff;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+.mui-part-content .part-header h3 {
+	position: relative;
+	font-size: 16px;
+	padding-left: 15px;
+	color: #333;
+}
+.mui-part-content .part-header h3:before {
+	display: inline-block;
+	content: '';
+	width: 4px;
+	height: 15px;
+	border-radius: 2px;
+	background-color: #fe9901;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.mui-part-content .part-content {
+	padding: 20px 0;
+}
+
+.mui-part-content .part-content p {
+	text-indent: 25px;
+}
+
+.mui-part-content .part-content p > span {
+	font-size: 16px;
+	color: #ff5d60;
+}
+
+.mui-part-content .part-content img {
+	display: block;
+	width: 100% !important;
 }
 
 

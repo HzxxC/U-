@@ -9,6 +9,8 @@
         var loc = event.data;
         if (loc && loc.module == 'locationPicker') { //防止其他应用也会向该页面post信息，需判断module是否为'locationPicker'
         	data = loc;
+            data.latlng.lat = data.latlng.lat.toFixed(5);
+            data.latlng.lng = data.latlng.lng.toFixed(5);
         }
     }, false);
 
