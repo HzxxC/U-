@@ -80,4 +80,59 @@ class UserOperateModel extends Model
             return $this;
         }
     }
+
+
+    public function userOperateList($param, $ispage = false)
+    {
+        $where = [
+            'uo.create_time' => ['>=', 0],
+            'uo.type' => $param['type']
+        ];
+
+        $join = [
+            [config('datebase.prefix').'user u', 'u.id = uo.user_id','LEFT'],
+            [config('datebase.prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
+        ];
+
+        $field = 'uo.*, u.user_nickname, pp.post_title';
+
+        $startTime = empty($param['start_time']) ? 0 : strtotime($param['start_time']);
+        $endTime   = empty($param['end_time']) ? 0 : strtotime($param['end_time']);
+       
+        if (!empty($startTime) && !empty($endTime)) {
+            $where['uo.create_time'] = [['>= time', $startTime], ['<= time', $endTime]];
+        } else {
+            if (!empty($startTime)) {
+                $where['uo.create_time'] = ['>= time', $startTime];
+            }
+            if (!empty($endTime)) {
+                $where['uo.create_time'] = ['<= time', $endTime];
+            }
+        }
+
+        $keyword = empty($param['keyword']) ? '' : $param['keyword'];
+        if (!empty($keyword)) {
+            $where['uo.more'] = ['like', "%$keyword%"];
+        }
+
+        $status = empty($param['status']) ? 0: intval($param['status']);
+        if (!empty($status)) {
+            $where['uo.status'] = $status;
+        } 
+
+        $data        = $this->alias('uo')->field($field)
+            ->join($join)
+            ->where($where)
+            ->order('create_time', 'DESC');
+
+        if ($ispage) {
+            $data = $data->paginate(10);
+        } else {
+            $data = $data->select();
+        }
+
+        return $data;
+
+    }
+
 }

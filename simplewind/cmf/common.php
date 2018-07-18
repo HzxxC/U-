@@ -2376,7 +2376,8 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
    
     foreach ($articles as $key => $value) {
         $articles[$key]['more'] = json_decode($value['more'], true);
-       
+        
+        $articles[$key]['active_status'] = cmf_check_user_operate($value['id'], $value['post_type']);
         $articles[$key]['published_time'] = date('Y-m-d', $value['published_time']); 
         $articles[$key]['url']     = cmf_url('portal/Article/index', array('id'=>$value['id'],'cid'=>$id,'type'=>$value['post_type']));
         $articles[$key]['imgUrl']  = cmf_get_image_preview_url($articles[$key]['more']['thumbnail']);
@@ -2449,6 +2450,17 @@ function cmf_check_active($uid, $pid, $type) {
 
     $where = [
         'user_id' => $uid,
+        'pid' => $pid,
+        'type' => $type
+    ];
+
+    return Db::name('user_operate') -> where($where) -> count();
+
+}
+
+function cmf_check_user_operate($pid, $type) {
+
+    $where = [
         'pid' => $pid,
         'type' => $type
     ];

@@ -64,6 +64,8 @@ class ArticleController extends HomeBaseController
         Db::name('portal_post')->where(['id' => $articleId])->setInc('post_hits');
 
 
+        $article['active_status'] = cmf_check_user_operate($articleId, $type);
+
         hook('portal_before_assign_article', $article);
 
         $this->assign('article', $article);

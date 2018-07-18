@@ -49,12 +49,17 @@
             <div class="mui-card-content">
                 <div class="header mui-clearfix">
                     <h4>{$article.post_title}</h4>
-                    <if condition="$article.post_type eq 3 or $article.post_type eq 6">
+                    <if condition="$article.post_type eq 3 or $article.post_type eq 6 or $article.post_type eq 8">
                         <div class="info mui-pull-left">
-                            <p>奖励：{$article.score}&nbsp;&nbsp;积分</p>
+                            <p>需要积分：{$article.score}&nbsp;&nbsp;积分</p>
                         </div>
                         <div class="operate mui-pull-right">
-                            <a href="javascript:;" id="promptBtn" class="mui-btn mui-btn-danger" data-toggle="modal" data-target="#myModal">兑换</a>
+                            <if condition="$article['active_status']">
+                                <a href="javascript:;" id="promptBtn" class="mui-btn mui-btn-danger" data-toggle="modal" data-target="#myModal">兑换</a>    
+                            <else/>
+                                <a href="javascript:;" id="promptBtn" class="mui-btn mui-btn-disabled">已兑换</a>
+                            </if>
+                            
                         </div>
                     </if>
                     <if condition="$article.post_type eq 4">

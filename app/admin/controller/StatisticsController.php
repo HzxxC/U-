@@ -12,6 +12,8 @@ namespace app\admin\controller;
 
 use cmf\controller\AdminBaseController;
 use think\Db;
+use app\portal\model\UserOperateModel;
+use app\portal\model\PortalPostModel;
 use app\admin\model\AdminMenuModel;
 
 class StatisticsController extends AdminBaseController
@@ -32,25 +34,25 @@ class StatisticsController extends AdminBaseController
      */
     public function goods() {
 
-        $where = [
-            'type' => 3
-        ];
-        $join = [
-            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
-            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
-        ];
-        $actions = Db::name('user_operate')->alias('uo')
-                    ->join($join)
-                    ->where($where)
-                    ->field('uo.*, u.user_nickname, pp.post_title')
-                    ->order('create_time DESC')->paginate(20);
-        // 获取分页显示
-        $page = $actions->render();
+        $param = $this->request->param();
 
-        $this->assign('actions', $actions);
-        $this->assign('page', $page);
-        // 渲染模板输出
+        $param['status'] = $this->request->param('status', 1, 'intval');
+        $param['type'] = 3;
+
+        $userOperateModel = new UserOperateModel();
+        $data        = $userOperateModel->userOperateList($param, true);
+
+        $data->appends($param);
+
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
+        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('status', isset($param['status']) ? $param['status'] : 1);
+        $this->assign('actions', $data->items());
+        $this->assign('page', $data->render());
+
         return $this->fetch();
+
     }
 
     /**
@@ -59,24 +61,22 @@ class StatisticsController extends AdminBaseController
      */
     public function card() {
 
-        $where = [
-            'type' => 6
-        ];
-        $join = [
-            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
-            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
-        ];
-        $actions = Db::name('user_operate')->alias('uo')
-                    ->join($join)
-                    ->where($where)
-                    ->field('uo.*, u.user_nickname, pp.post_title')
-                    ->order('create_time DESC')->paginate(20);
-        // 获取分页显示
-        $page = $actions->render();
+        $param = $this->request->param();
 
-        $this->assign('actions', $actions);
-        $this->assign('page', $page);
-        // 渲染模板输出
+        $param['type'] = 6;
+
+        $userOperateModel = new UserOperateModel();
+        $data        = $userOperateModel->userOperateList($param, true);
+
+        $data->appends($param);
+
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
+        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('status', isset($param['status']) ? $param['status'] : 1);
+        $this->assign('actions', $data->items());
+        $this->assign('page', $data->render());
+
         return $this->fetch();
     }
 
@@ -137,24 +137,55 @@ class StatisticsController extends AdminBaseController
      */
     public function wish() {
 
-        $where = [
-            'type' => 8
-        ];
-        $join = [
-            [config('prefix').'user u', 'u.id = uo.user_id','LEFT'],
-            [config('prefix').'portal_post pp', 'pp.id = uo.pid','LEFT'],
-        ];
-        $actions = Db::name('user_operate')->alias('uo')
-                    ->join($join)
-                    ->where($where)
-                    ->field('uo.*, u.user_nickname, pp.post_title')
-                    ->order('create_time DESC')->paginate(20);
-        // 获取分页显示
-        $page = $actions->render();
+        $param = $this->request->param();
 
-        $this->assign('actions', $actions);
-        $this->assign('page', $page);
-        // 渲染模板输出
+        $param['status'] = $status = $this->request->param('status', 0, 'intval');
+        $param['type'] = 8;
+
+        if ($status) {
+            $userOperateModel = new UserOperateModel();
+            $data        = $userOperateModel->userOperateList($param, true);
+        } else {
+            $portalPostModel = new PortalPostModel();
+            $data        = $portalPostModel->wishList($param, true);
+        }
+
+        $data->appends($param);
+
+        $this->assign('start_time', isset($param['start_time']) ? $param['start_time'] : '');
+        $this->assign('end_time', isset($param['end_time']) ? $param['end_time'] : '');
+        $this->assign('keyword', isset($param['keyword']) ? $param['keyword'] : '');
+        $this->assign('status', isset($param['status']) ? $param['status'] : 0);
+        $this->assign('actions', $data->items());
+        $this->assign('page', $data->render());
+
         return $this->fetch();
+    }
+
+    /**
+     * 商品兑换
+     * @return [type] [description]
+     */
+    public function exchange()
+    {
+        $param           = $this->request->param();
+        $userOperateModel = new UserOperateModel();
+
+        if (isset($param['ids']) && isset($param["yes"])) {
+            $ids = $this->request->param('ids/a');
+
+            $userOperateModel->where(['id' => ['in', $ids]])->update(['status' => 2, 'exchange_time' => time()]);
+
+            $this->success("商品兑换成功！", '');
+        }
+
+        if (isset($param['ids']) && isset($param["no"])) {
+            $ids = $this->request->param('ids/a');
+
+            $userOperateModel->where(['id' => ['in', $ids]])->update(['status' => 1]);
+
+            $this->success("取消商品兑换成功！", '');
+        }
+
     }
 }
