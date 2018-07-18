@@ -87,17 +87,24 @@
 
     function addData(data) {
         var table = document.body.querySelector('.mui-table-view');
+        var html = ''
         for(var i = 0, len = data.length; i < len; i++) {
             var li = document.createElement('li');
             li.className = 'mui-table-view-cell  mui-media';
-            li.innerHTML = '<a href="' + data[i].url + '" class="a-link">' +
+            html = '<a href="' + data[i].url + '" class="a-link">' +
                                 '<img class="mui-media-object mui-pull-left" src="' + data[i].imgUrl + '">' +
                                 '<div class="mui-media-body">' +
                                     data[i].post_title +
                                     '<p class="mui-ellipsis">心愿' + data[i].post_excerpt + '</p>' +
                                 '</div>' +
-                            '</a>' +
-                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">实现</a>';
+                            '</a>';
+            if (data[i].active_status) {
+                html += '<a href="#" disabled="true" class="mui-btn mui-btn-disabled a-link">已实现</a>';
+            } else {
+                html += '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">实现</a>';
+            }
+
+            li.innerHTML = html; 
             //下拉刷新，新纪录插到最前面；
             table.appendChild(li);
         }

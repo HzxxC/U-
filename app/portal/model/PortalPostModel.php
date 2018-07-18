@@ -384,4 +384,48 @@ class PortalPostModel extends Model
         return $this;
     }
 
+    public function wishList($param, $ispage = false) {
+        
+        $where = [
+            'pp.published_time' => ['>=', 0],
+            'pp.post_type' => $param['type']
+        ];
+
+        $field = 'pp.id, pp.post_title, pp.more, pp.published_time, pp.score';
+
+        $startTime = empty($param['start_time']) ? 0 : strtotime($param['start_time']);
+        $endTime   = empty($param['end_time']) ? 0 : strtotime($param['end_time']);
+       
+        if (!empty($startTime) && !empty($endTime)) {
+            $where['pp.published_time'] = [['>= time', $startTime], ['<= time', $endTime]];
+        } else {
+            if (!empty($startTime)) {
+                $where['pp.published_time'] = ['>= time', $startTime];
+            }
+            if (!empty($endTime)) {
+                $where['pp.published_time'] = ['<= time', $endTime];
+            }
+        }
+
+        $keyword = empty($param['keyword']) ? '' : $param['keyword'];
+        if (!empty($keyword)) {
+            $where['pp.post_title'] = ['like', "%$keyword%"];
+        }
+
+        $data  = $this->alias('pp')->field($field)
+            ->where('pp.id', 'not in', function($query){
+                $query->name('user_operate')->where('type',8)->field('pid');
+            })
+            ->where($where)
+            ->order('published_time', 'DESC');
+
+        if ($ispage) {
+            $data = $data->paginate(10);
+        } else {
+            $data = $data->select();
+        }
+
+        return $data;
+    }
+
 }

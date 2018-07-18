@@ -47,7 +47,6 @@ class ListController extends HomeBaseController
          } else {
             return ['code'=>0, 'msg'=>'没有更多数据了'];
          }
-
          
      }
 

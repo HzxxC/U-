@@ -4,6 +4,7 @@
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
         <li class="active"><a href="javascript:;">所有爱的记忆</a></li>
+        <li><a href="{:url('AdminArticle/add_memory', array('category' => $category, 'type' => $postType))}">添加爱的记忆</a></li>
     </ul>
     <form class="well form-inline margin-top-20" method="post" action="{:url('AdminArticle/index')}">
         分类:
@@ -61,8 +62,7 @@
                 </notempty>
                 <th width="50">ID</th>
                 <th>标题</th>
-                <th>分类</th>
-                <th width="50">作者</th>
+                <th width="160">作者</th>
                 <th width="65">点击量</th>
                 <th width="160">缩略图</th>
                 <th width="130">更新时间</th>
@@ -93,16 +93,6 @@
                                target="_blank">{$vo.post_title}</a>
                         </notempty>
                     </td>
-                    <td>
-                        <foreach name="vo.categories" item="voo">
-                            <span class="label label-default">
-                                <a href="{:cmf_url('portal/List/index',array('id'=>$voo['id']))}"
-                                   style="color: #fff;"
-                                   target="_blank"
-                                >{$voo.name}</a>
-                            </span>&nbsp;
-                        </foreach>
-                    </td>
                     <td>{$vo.user_nickname}</td>
                     <td>{$vo.post_hits|default=0}</td>
                     <td>
@@ -113,12 +103,17 @@
                         </notempty>
                     </td>
                     <td>
+                        <notempty name="vo.update_time">
+                            {:date('Y-m-d H:i',$vo['update_time'])}
+                        </notempty>
+
+                    </td>
+                    <td>
                         <empty name="vo.published_time">
                             未发布
                             <else/>
                             {:date('Y-m-d H:i',$vo['published_time'])}
                         </empty>
-
                     </td>
                     <td>
                         <notempty name="vo.post_status">
@@ -128,7 +123,7 @@
                         </notempty>
                     </td>
                     <td>
-                        <a href="{:url('AdminArticle/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                        <a href="{:url('AdminArticle/edit_memory',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
                         <a href="{:url('AdminArticle/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:lang('DELETE')}</a>
                     </td>
                 </tr>
@@ -142,8 +137,7 @@
                 </notempty>
                 <th width="50">ID</th>
                 <th>标题</th>
-                <th>分类</th>
-                <th width="50">作者</th>
+                <th width="160">作者</th>
                 <th width="65">点击量</th>
                 <th width="160">缩略图</th>
                 <th width="130">更新时间</th>

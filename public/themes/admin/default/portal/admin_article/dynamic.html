@@ -69,7 +69,8 @@
                 </notempty>
                 <th width="50">ID</th>
                 <th>活动名称</th>
-                <th width="100">活动日期</th>
+                <th width="130">报名开始日期</th>
+                <th width="130">报名结束日期</th>
                 <!--  -->
                 <th width="90">奖励积分</th>
                 <th width="160">缩略图</th>
@@ -101,7 +102,8 @@
                                target="_blank">{$vo.post_title}</a>
                         </notempty>
                     </td>
-                    <td>{$vo.more.active_date}</td>
+                    <td>{$vo.more.active_start_date}</td>
+                    <td>{$vo.more.active_end_date}</td>
                     <td>{$vo.score|default=0}</td>
                     <td>
                         <notempty name="vo.more.thumbnail">
@@ -159,7 +161,8 @@
                 </notempty>
                 <th width="50">ID</th>
                 <th>活动名称</th>
-                <th width="100">活动日期</th>
+                <th width="130">报名开始日期</th>
+                <th width="130">报名结束日期</th>
                 <!--  -->
                 <th width="90">奖励积分</th>
                 <th width="160">缩略图</th>

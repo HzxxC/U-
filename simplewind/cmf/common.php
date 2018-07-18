@@ -2333,6 +2333,14 @@ function cmf_get_distance($fP1Lat, $fP1Lon, $fP2Lat, $fP2Lon){
     return intval($fEARTH_RADIUS * 2 * asin(sqrt($fP)) + 0.5);
 }
 
+/**
+ * 通过分类ID 获得文章列表
+ * @param  [type]  $id        [description]
+ * @param  [type]  $post_type [description]
+ * @param  [type]  $page      [description]
+ * @param  integer $limit     [description]
+ * @return [type]             [description]
+ */
 function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
 
     $where = [
@@ -2368,7 +2376,8 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
    
     foreach ($articles as $key => $value) {
         $articles[$key]['more'] = json_decode($value['more'], true);
-       
+        
+        $articles[$key]['active_status'] = cmf_check_user_operate($value['id'], $value['post_type']);
         $articles[$key]['published_time'] = date('Y-m-d', $value['published_time']); 
         $articles[$key]['url']     = cmf_url('portal/Article/index', array('id'=>$value['id'],'cid'=>$id,'type'=>$value['post_type']));
         $articles[$key]['imgUrl']  = cmf_get_image_preview_url($articles[$key]['more']['thumbnail']);
@@ -2384,6 +2393,12 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
 
 }
 
+/**
+ * 校验 会员积分是否充足
+ * @param  [type] $uid   [description]
+ * @param  [type] $score [description]
+ * @return [type]        [description]
+ */
 function cmf_check_user_score($uid, $score) {
 
     $where = [
@@ -2398,6 +2413,13 @@ function cmf_check_user_score($uid, $score) {
 
 }
 
+/**
+ * 记录会员积分日志
+ * @param  [type] $uid   [description]
+ * @param  [type] $score [description]
+ * @param  [type] $type  [description]
+ * @return [type]        [description]
+ */
 function cmf_user_score($uid, $score, $type) {
     $pm = cmf_check_pm($type);
     $action = cmf_check_action_name($type);
@@ -2418,4 +2440,31 @@ function cmf_user_score($uid, $score, $type) {
             "create_time"     => time()
         ]);
     }
+}
+
+function cmf_check_active($uid, $pid, $type) {
+
+    if ($type == 3) {
+        return false;
+    }
+
+    $where = [
+        'user_id' => $uid,
+        'pid' => $pid,
+        'type' => $type
+    ];
+
+    return Db::name('user_operate') -> where($where) -> count();
+
+}
+
+function cmf_check_user_operate($pid, $type) {
+
+    $where = [
+        'pid' => $pid,
+        'type' => $type
+    ];
+
+    return Db::name('user_operate') -> where($where) -> count();
+
 }

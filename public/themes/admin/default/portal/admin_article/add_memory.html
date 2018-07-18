@@ -29,8 +29,8 @@
 <body>
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li><a href="{:url('AdminArticle/dynamic', array('category' => $category, 'type'=> $postType))}">所有动态</a></li>
-        <li class="active"><a href="{:url('AdminArticle/add_dynamic', array('category' => $category, 'type'=> $postType))}">添加动态</a></li>
+        <li><a href="{:url('AdminArticle/memory', array('category' => $category, 'type'=> $postType))}">所有爱的记忆</a></li>
+        <li class="active"><a href="{:url('AdminArticle/add_memory', array('category' => $category, 'type'=> $postType))}">添加爱的记忆</a></li>
     </ul>
     <form action="{:url('AdminArticle/addPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
         <div class="row">
@@ -44,44 +44,17 @@
                                    readonly/>
                             <input class="form-control" type="hidden" value="{$category}"
                                    name="post[categories]"/>
-                            <input class="form-control" type="hidden" value="dynamic"
+                            <input class="form-control" type="hidden" value="memory"
                                    name="post[type]"/>
                             <input class="form-control" type="hidden" value="{$postType}"
                                    name="post[post_type]"/>
                         </td>
                     </tr>
                     <tr>
-                        <th>活动名称<span class="form-required">*</span></th>
+                        <th>标题<span class="form-required">*</span></th>
                         <td>
                             <input class="form-control" type="text" name="post[post_title]"
-                                   id="title" required value="" placeholder="请输入活动名称"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>报名时间<span class="form-required">*</span></th>
-                        <td>
-                            <input class="form-control js-bootstrap-datetime" type="text" name="post[more][active_start_date]" style="display:inline-block; width:300px;"
-                                   id="title" required value="" placeholder="报名开始时间"/>&nbsp;&nbsp;--&nbsp;&nbsp;
-                            <input class="form-control js-bootstrap-datetime" type="text" name="post[more][active_end_date]" style="display:inline-block; width:300px;"
-                                   id="title" required value="" placeholder="报名结束时间"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>奖励积分<span class="form-required">*</span></th>
-                        <td>
-                           <input class="form-control" type="text" name="post[score]" style="width:300px;"
-                                   id="title" required value="" placeholder="会员可获得积分数"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>活动地点</th>
-                        <td>
-                            <div style="display: inline-block;">
-                                <input class="form-control" type="text" id="address" name="post[more][address]" style="width:500px;" required
-                                   value="" placeholder="详细地址" 
-                                   readonly/>
-                            </div>
-                            <a href="javascript:parent.openIframeLayer('{:url('AdminArticle/location')}','活动地址',{area: ['35%', '70%'], btn:['确认','关闭'], yes: function(index) {setLocation(index);}});" class="btn btn-default" style="position: relative; top: -3px; left: 45px;">获取活动地点</a>
+                                   id="title" required value="" placeholder="请输入标题"/>
                         </td>
                     </tr>
                     <tr>
@@ -199,14 +172,6 @@
         });
     }
 
-    function setLocation(index) {
-        //当点击‘确定’按钮的时候，获取弹出层返回的值
-        var res = parent.window["layui-layer-iframe" + index].callbackdata();
-
-        $('#address').val(res.poiaddress+res.poiname);
-
-        parent.layer.close(index);
-    }
 </script>
 </body>
 </html>

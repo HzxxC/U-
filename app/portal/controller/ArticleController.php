@@ -64,6 +64,8 @@ class ArticleController extends HomeBaseController
         Db::name('portal_post')->where(['id' => $articleId])->setInc('post_hits');
 
 
+        $article['active_status'] = cmf_check_user_operate($articleId, $type);
+
         hook('portal_before_assign_article', $article);
 
         $this->assign('article', $article);
@@ -102,9 +104,14 @@ class ArticleController extends HomeBaseController
 
          if ($user = cmf_get_current_user()) {
             
-            // TODO: 校验会员积分是否充足
+            // 校验会员积分是否充足
             if (cmf_check_user_score($user['id'], $data['score'])) {
                 return ['is_err' => 0, 'msg' => '积分不足，请继续努力'];
+            }
+
+            // 心愿，一卡通，只能实现一次
+            if (cmf_check_active($user['id'], $data['pid'], $data['type'])) {
+                return ['is_err' => 0, 'msg' => '数据已存在'];
             }
 
             $userOperate->insertUserOperate($user['id'], $data);
@@ -140,7 +147,7 @@ class ArticleController extends HomeBaseController
                     // 添加用户操作
                     $userOperate->insertUserOperate($uid, $today_track);
 
-                    return ['code'=>1, 'msg'=>'报名服务成功'];
+                    return ['code'=>1, 'msg'=>'报名成功'];
                 }
 
                 //点击结束

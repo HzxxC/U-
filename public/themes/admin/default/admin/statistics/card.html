@@ -1,43 +1,164 @@
 <include file="public@header"/>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
-        <li class="active"><a>一卡通兑换列表</a></li>
+        <li class="active"><a href="{:url('Statistics/goods', array('status'=>1))}">一卡通兑换列表</a></li>
     </ul>
-    <form method="post" class="js-ajax-form margin-top-20">
-        <table class="table table-hover table-bordered">
+    <form class="well form-inline margin-top-20" method="post" action="{:url('Statistics/goods')}">
+        时间:
+        <input type="text" class="form-control js-bootstrap-datetime" name="start_time"
+               value="{$start_time|default=''}"
+               style="width: 140px;" autocomplete="off">-
+        <input type="text" class="form-control js-bootstrap-datetime" name="end_time"
+               value="{$end_time|default=''}"
+               style="width: 140px;" autocomplete="off"> &nbsp; &nbsp;
+        姓名:
+        <input type="text" class="form-control" name="keyword" style="width: 200px;"
+               value="{$keyword|default=''}" placeholder="请输入兑换者姓名...">
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('Statistics/exchange',array('yes'=>1))}" data-subcheck="true" data-msg="您确定兑换吗？">兑换
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('Statistics/exchange',array('no'=>1))}" data-subcheck="true">取消兑换
+            </button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
             <thead>
             <tr>
-                <th>ID</th>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="50">ID</th>
                 <th>商品名称</th>
-                <th>会员名称</th>
-                <th>兑换者姓名</th>
-                <th>兑换者手机号</th>
-                <th>消耗积分</th>
-                <th>创建时间</th>
+                <th width="130">会员名称</th>
+                <th width="160">兑换者姓名</th>
+                <th width="160">兑换者手机号</th>
+                <th width="90">消耗积分</th>
+                <th width="130">创建时间</th>
+                <th width="90">操作</th>
             </tr>
             </thead>
-            <tbody>
-                <foreach name="actions" id="vo">
-                    <php>
-                        $more = json_decode($vo['more'], true);
-                    </php>
-                    <tr>
-                        <td>{$vo.id}</td>
-                        <td>{$vo.post_title}</td>
-                        <td>{$vo.user_nickname}</td>
-                        <td>{$more.username}</td>
-                        <td>{$more.phone}</td>
-                        <td>{$vo.score}</td>
-                        <td>{:date('Y-m-d H:i', $vo.create_time)}</td>
-                    </tr>
-                </foreach>
-            </tbody>
+            <foreach name="actions" item="vo">
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                               value="{$vo.id}" title="ID:{$vo.id}">
+                    </td>
+                    <td><b>{$vo.id}</b></td>
+                    <td>
+                        <a href="" target="_blank">{$vo.post_title}</a>
+                    </td>
+                    <td>{$vo.user_nickname}</td>
+                    <td>{$vo.more.username}</td>
+                    <td>{$vo.more.phone}</td>
+                    <td>{$vo.score}</td>
+                    <td>{:date('Y-m-d H:i', $vo.create_time)}</td>
+                    <td>
+                        <if condition="$vo.status eq 1">
+                            <a href="{:url('Statistics/exchange',array('ids'=>$vo['id'], 'yes'=>1))}" class="js-ajax-dialog-btn">兑换</a>
+                        <else/>
+                            <a href="{:url('Statistics/exchange',array('ids'=>$vo['id'], 'no'=>1))}" class="js-ajax-dialog-btn">取消兑换</a>
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+            <tfoot>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x"
+                                             data-checklist="js-check-x"></label></th>
+                <th width="50">ID</th>
+                <th>商品名称</th>
+                <th width="130">会员名称</th>
+                <th width="160">兑换者姓名</th>
+                <th width="160">兑换者手机号</th>
+                <th width="65">消耗积分</th>
+                <th width="130">创建时间</th>
+                <th width="90">操作</th>
+            </tr>
+            </tfoot>
         </table>
-        <div class="pagination"></div>
+        <div class="table-actions">
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('Statistics/exchange',array('yes'=>1))}" data-subcheck="true" data-msg="您确定兑换吗？">兑换
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('Statistics/exchange',array('no'=>1))}" data-subcheck="true">取消兑换
+            </button>
+        </div>
+        <ul class="pagination">{$page|default=''}</ul>
     </form>
 </div>
 <script src="__STATIC__/js/admin.js"></script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>

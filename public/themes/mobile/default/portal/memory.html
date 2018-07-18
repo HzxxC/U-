@@ -63,10 +63,6 @@
                         <input id='post_excerpt' name="post[post_excerpt]" type="hidden" value="" />
                         <input id='categories' name="post[categories]" type="hidden" value="{$category.id}" />
                     </div>
-                    <button id="showUserPicker" class="mui-btn" type="button">请选择分类<span class="caret"></span></button>
-                    <div class="row mui-input-row">
-                        <textarea id='post_content' name="post[post_content]" class="mui-input-clear question" placeholder="请输入内容"></textarea>
-                    </div>
                     <ul id="photos" class="mui-table-view"></ul>
                     <div id="photos-list">
                         <a href="javascript:uploadMobileMultiImage('图片上传','#photos','photos-item-tpl');" id="openUploadImg">请选择图片上传</a>
@@ -117,7 +113,7 @@
          mui.ajax('{:cmf_url("portal/list/ajax_get_list")}',{
             data:{
                 id: "{$category.id}",
-                post_type: 4,
+                post_type: 9,
                 page: window.page
             },
             dataType:'json',//服务器返回json格式数据
@@ -154,8 +150,7 @@
                                     data[i].post_title +
                                     '<p class="mui-ellipsis">时间：' + data[i].published_time + '</p>' +
                                 '</div>' +
-                            '</a>' +
-                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">我要报名</a>';
+                            '</a>';
             //下拉刷新，新纪录插到最前面；
             table.appendChild(li);
         }
@@ -313,44 +308,6 @@
 
         });
     }
-</script>
-<script>
-    (function($, doc) {
-        $.init();
-        $.ready(function() {
-            /**
-             * 获取对象属性的值
-             * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
-             * @param {Object} obj 对象
-             * @param {String} param 属性名
-             */
-            var _getParam = function(obj, param) {
-                return obj[param] || '';
-            };
-            //普通示例
-            var userPicker = new $.PopPicker();
-            userPicker.setData([{
-                value: '金晖助老',
-                text: '金晖助老'
-            }, {
-                value: '牵手关爱',
-                text: '牵手关爱'
-            }, {
-                value: '生态环保',
-                text: '生态环保'
-            }, {
-                value: '传统文化',
-                text: '传统文化'
-            }]);
-            var showUserPickerButton = doc.getElementById('showUserPicker');
-            showUserPickerButton.addEventListener('tap', function(event) {
-                userPicker.show(function(items) {
-                    showUserPickerButton.innerHTML = items[0].value + "<span class='caret'></span>";
-                   document.getElementById('post_excerpt').value = items[0].value; 
-                });
-            }, false);
-        });
-    })(mui, document);
 </script>
 <hook name="before_body_end"/>
 </body>
