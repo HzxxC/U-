@@ -2261,20 +2261,17 @@ function cmf_get_track($pid) {
  * @param  [type] $uid [description]
  * @return [type]      [description]
  */
-function cmf_get_today_track($uid) {
+function cmf_get_today_track($uid, $pid) {
 
     $where = [
         'post_type' => 5,
         'post_status' => 1,
-        'active_start_time' => ['elt', time()],
-        'active_end_time' => ['egt', time()]
+        'id' => $pid
     ];
 
-    $orderby = "active_start_time ASC";
+    $field = "id, active_start_time, active_end_time";
 
-    $field = "id, post_title, active_start_time, active_end_time, more, score, post_type";
-
-    $track_info = Db::name('portal_post') -> where($where) -> field($field) -> order($orderby) -> find();
+    $track_info = Db::name('portal_post') -> where($where) -> field($field) -> find();
 
     if (!empty($track_info)) {
         // 会员已参与此次活动，获得服务时长
@@ -2282,6 +2279,18 @@ function cmf_get_today_track($uid) {
     }
 
     return $track_info;
+}
+
+function cmf_check_today_track_time($pid) {
+    $where = [
+        'post_type' => 5,
+        'post_status' => 1,
+        'id' => $pid
+    ];
+
+    $active_start_time = Db::name('portal_post') -> where($where) -> value("active_start_time");
+
+    return (time() - $active_start_time) >= 0 ? true : false;
 }
 
 /**
@@ -2354,6 +2363,7 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
     $order       = "post.create_time DESC";
 
 
+
     $page = empty($page) ? 1 : $page;
     $limit = empty($limit) ? 5 : $limit;
    
@@ -2361,14 +2371,19 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
         //['__USER__ user', 'post.user_id = user.id'],
     ];
 
-    $field ='post.id, post.post_title, post.post_type, post.more, post.score, post.post_excerpt, post.published_time';
+    $field ='post.id, post.post_title, post.post_type, post.more, post.score, post.post_excerpt, post.published_time, post.active_start_time, post.active_end_time';
     array_push($join, ['__PORTAL_CATEGORY_POST__ category_post', 'post.id = category_post.post_id']);
 
     $articles = Db::name('portal_post')->alias('post')->field($field)
         ->join($join)
-        ->where($where)
-        ->order($order)
-        ->group('post.id');
+        ->where($where);
+
+    if ($post_type == 5) {
+        $articles->whereTime('active_start_time', 'd');
+    }
+
+    $articles = $articles->order($order)
+                    ->group('post.id');
 
     $return = [];
     
@@ -2382,6 +2397,10 @@ function cmf_get_list_by_cateId($id, $post_type, $page, $limit = 5) {
         $articles[$key]['url']     = cmf_url('portal/Article/index', array('id'=>$value['id'],'cid'=>$id,'type'=>$value['post_type']));
         $articles[$key]['imgUrl']  = cmf_get_image_preview_url($articles[$key]['more']['thumbnail']);
         $articles[$key]['address'] = empty($articles[$key]['more']['address']) ? "暂未活动地点" : $articles[$key]['more']['address'];
+
+        if ($value['post_type'] == 5) {
+            $articles[$key]['active_date'] =  date('Y-m-d H:i', $value['active_start_time']).'~'.date('H:i', $value['active_end_time']);
+        }
     }
 
     $return['articles']    = $articles;
@@ -2467,4 +2486,20 @@ function cmf_check_user_operate($pid, $type) {
 
     return Db::name('user_operate') -> where($where) -> count();
 
+}
+
+function cmf_check_file_suffix($file, $type = 'xlsx') {
+
+    return $type == substr($file, 0, 42) ? true : false;
+
+}
+
+function cmf_get_wish_complete($pid) {
+
+    $where = [
+        'pid' => $pid
+    ];
+
+    $more = Db::name('user_operate') -> where($where) -> value('more');
+    return json_decode($more, true);
 }

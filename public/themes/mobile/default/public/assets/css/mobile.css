@@ -898,3 +898,21 @@ button#reg {
 	font-size: 14px;
 }
 
+
+
+.mui-pull-caption {
+	display: none;
+}
+.empty-data {
+	display: none;
+	width: 100%;
+	padding-top: 64px;
+}
+.empty-data img {
+	display: block;
+	width: 120px;
+	margin: 0 auto;
+}
+.empty-data p {
+	text-align: center;
+}

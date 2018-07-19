@@ -20,6 +20,12 @@
         <input type="submit" class="btn btn-primary" value="搜索"/>
         <a class="btn btn-danger" href="{:url('AdminArticle/wish')}">清空</a>
     </form>
+    <form class="well form-inline margin-top-20" method="post" enctype="multipart/form-data" action="{:url('admin/Excel/importWish')}">
+        <button class="btn btn-primary" type="button" onclick="openFile();">选择文件</button>
+        <input name="excel" type="file" id="file" class="form-control" style="display: none;">
+        <input type="hidden" name="category_id" value="{$category}">
+        <button class="btn btn-primary">导入</button>
+    </form>
     <form class="js-ajax-form" action="" method="post">
         <div class="table-actions">
             <notempty name="category">
@@ -210,6 +216,11 @@
 
     function reloadPage(win) {
         win.location.reload();
+    }
+
+    function openFile() {
+        var file = document.getElementById('file');
+        file.click();
     }
 
     $(function () {
