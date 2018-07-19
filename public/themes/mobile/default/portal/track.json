@@ -1,7 +1,7 @@
 {
-    "name": "爱的足迹 列表页",
-    "action": "portal/List/index",
-    "description": "爱的足迹 列表模板文件",
+    "name": "爱的足迹 详情页",
+    "action": "portal/Article/index",
+    "description": "爱的足迹 详情页模板文件",
     "order": 10.0,
     "more": {
        

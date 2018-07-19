@@ -139,6 +139,11 @@ class ArticleController extends HomeBaseController
             $uid = cmf_get_current_user_id();
             $today_track =  cmf_get_track($data['pid']);
 
+            // 判断是否到活动时间
+            if (!cmf_check_today_track_time($data['pid'])) {
+                return ['code'=>0, 'msg'=>'当前活动还没开始，请耐心等待'];
+            }
+
             // 判断会员是否在区域范围内
             if (cmf_check_user_location($data['pid'], $data['lat'], $data['lng'])) {
 

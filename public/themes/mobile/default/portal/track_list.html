@@ -7,7 +7,7 @@
     <include file="public@head"/>
     <hook name="before_head_end"/>
 </head>
-<body class="body-white" id="relay-list">
+<body class="body-white" id="dynamic-list">
 
     <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
@@ -63,7 +63,7 @@
          mui.ajax('{:cmf_url("portal/list/ajax_get_list")}',{
             data:{
                 id: "{$category.id}",
-                post_type: 8,
+                post_type: 5,
                 page: window.page
             },
             dataType:'json',//服务器返回json格式数据
@@ -80,6 +80,7 @@
                     document.getElementById('empty-data').style.display = 'block';
                     mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
                     mui.toast(data.msg);
+
                 }
                
             },
@@ -92,24 +93,18 @@
 
     function addData(data) {
         var table = document.body.querySelector('.mui-table-view');
-        var html = ''
         for(var i = 0, len = data.length; i < len; i++) {
             var li = document.createElement('li');
             li.className = 'mui-table-view-cell  mui-media';
-            html = '<a href="' + data[i].url + '" class="a-link">' +
+            li.innerHTML = '<a href="' + data[i].url + '" class="a-link">' +
                                 '<img class="mui-media-object mui-pull-left" src="' + data[i].imgUrl + '">' +
                                 '<div class="mui-media-body">' +
                                     data[i].post_title +
-                                    '<p class="mui-ellipsis">心愿' + data[i].post_excerpt + '</p>' +
+                                    '<p class="mui-ellipsis">' + data[i].address + '</p>' +
+                                    '<p class="mui-ellipsis">' + data[i].active_date + '</p>' +
                                 '</div>' +
-                            '</a>';
-            if (data[i].active_status) {
-                html += '<a href="#" disabled="true" class="mui-btn mui-btn-disabled a-link">已实现</a>';
-            } else {
-                html += '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">实现</a>';
-            }
-
-            li.innerHTML = html; 
+                            '</a>' +
+                            '<a href="' + data[i].url + '" class="mui-btn mui-btn-primary a-link">我要参加</a>';
             //下拉刷新，新纪录插到最前面；
             table.appendChild(li);
         }

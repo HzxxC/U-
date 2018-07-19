@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
-    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
-    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <title>{$article.post_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''}">
     <include file="public@head"/>
     <hook name="before_head_end"/>
 </head>
@@ -11,42 +11,37 @@
 
     <header class="mui-bar mui-bar-nav">
             <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-            <h1 class="mui-title">{$category.name}</h1>
+            <h1 class="mui-title">{$article.post_title|cmf_msubstr=0,10}</h1>
     </header>
     <div class="mui-content">
-        <php>
-            // 获得今日足迹活动
-            $uid = cmf_get_current_user_id();
-            $today_track = cmf_get_today_track($uid);
-        </php>
-        <notempty name="today_track">
+        <div class="track-content">
             <php>
-                $today_track['more'] = json_decode($today_track['more'], true);
+                $uid = cmf_get_current_user_id();
+                $today_track = cmf_get_today_track($uid, $article['id']);
             </php>
-            <div class="track-content">
-                <div class="today-track">
-                    <div class="track-img">
-                        <img src="{:cmf_get_image_preview_url($today_track.more.thumbnail)}" alt="">
-                    </div>
-                    <h3>{$today_track.post_title}</h3>
-                    <p><span class="mui-icon mui-icon-location"></span>{$today_track.more.address}</p>
-                    <div class="user-operate">
-                        <if condition="$today_track['uo']['has_join'] eq 0">
-                            <button type="button" id="start" class="mui-btn mui-btn-primary">点击开始</button>
-                        <else/>
-                            <button type="button" class="mui-btn mui-btn-primary" id="no-click-start">点击开始</button>
-                        </if>
-                        <if condition="$today_track['uo']['has_join_end'] eq 0" />
-                            <button type="button" id="end" class="mui-btn mui-btn-danger">点击结束</button>
-                        <else/>
-                            <button type="button" class="mui-btn mui-btn-danger" id="no-click-end">点击结束</button>    
-                        </if>
-                    </div>
+            <div class="today-track">
+                <div class="track-img">
+                    <img src="{:cmf_get_image_preview_url($article.more.thumbnail)}" alt="">
+                </div>
+                <h3>{$article.post_title}</h3>
+                <p><span class="mui-icon mui-icon-location"></span>{$article.more.address}</p>
+                <div class="user-operate">
+                    <if condition="$today_track['uo']['has_join'] eq 0">
+                        <button type="button" id="start" class="mui-btn mui-btn-primary">点击开始</button>
+                    <else/>
+                        <button type="button" class="mui-btn mui-btn-disabled" id="no-click-start">点击开始</button>
+                    </if>
+                    <if condition="$today_track['uo']['has_join_end'] eq 0" />
+                        <button type="button" id="end" class="mui-btn mui-btn-danger">点击结束</button>
+                    <else/>
+                        <button type="button" class="mui-btn mui-btn-disabled" id="no-click-end">点击结束</button>    
+                    </if>
                 </div>
             </div>
-        </notempty>
+        </div>
         <ul class="mui-table-view mui-table-view-chevron" id="list">
             <php>
+                
                 $join_track = cmf_get_user_join_track($uid);
             </php>
             <volist name="join_track" id="vo">
